@@ -1,5 +1,6 @@
 #include "MainFrame.h"
 #include "wxImagePanel.h"
+#include "wx/listctrl.h"
 
 class MainFrame;
 
@@ -44,6 +45,20 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	wxStaticText* second_point_txt = new wxStaticText(this, wxID_ANY, wxT("Second point:"));
 	vbox_controls_informations->Add(first_point_txt);
 	vbox_controls_informations->Add(second_point_txt);
+
+	// Add listbox for multiple ROIs
+	wxListCtrl* roi_list_box = new wxListCtrl(this, wxID_ANY,
+		                       wxDefaultPosition, wxSize(200,100),
+				       wxLC_LIST | wxBORDER_THEME);	
+	roi_list_box->InsertItem(0, wxT("Teste"));
+	roi_list_box->InsertItem(1, wxT("Teste"));
+	hbox_controls->Add(roi_list_box);
+
+	// Add buttons for editing the listbox
+	wxButton* add_roi_button = new wxButton(this, -1, wxT("+"));
+	wxButton* remove_roi_button = new wxButton(this, -1, wxT("-"));
+	vbox_controls_informations->Add(add_roi_button);
+	vbox_controls_informations->Add(remove_roi_button);
 
 	// Making the panel hierarchy
 	vbox_all->Add(hbox_image, 1, wxEXPAND);
