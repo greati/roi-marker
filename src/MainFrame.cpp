@@ -73,6 +73,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	global_panel->SetSizer(hbox_all);
 
 	image_panel->Connect( wxID_ANY, wxEVT_MOTION , wxMouseEventHandler(MainFrame::OnMouseMoved),NULL,this);
+	image_panel->Connect( wxID_ANY, wxEVT_LEFT_DOWN , wxMouseEventHandler(MainFrame::OnImageClick),NULL,this);
 
 	//---n Building the menu ---//
 	wxMenu* menuFile = new wxMenu;
@@ -98,6 +99,10 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
 	//-- Setting the icon --//
 	//SetIcon(wxIcon(wxT("/path/to/icon")); 
+}
+
+void MainFrame::OnImageClick(wxMouseEvent& event) {
+	wxMessageBox("This is ROI-Marker.", "About", wxOK | wxICON_INFORMATION);
 }
 
 void MainFrame::OnMouseMoved(wxMouseEvent& event) {

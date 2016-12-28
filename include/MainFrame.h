@@ -29,6 +29,8 @@ class MainFrame : public wxFrame {
 		
 		void OnMouseMoved(wxMouseEvent& event);
 
+		void OnImageClick(wxMouseEvent& event);
+
 		void OnExit(wxCommandEvent& event);
 		void OnAbout(wxCommandEvent& event);
 

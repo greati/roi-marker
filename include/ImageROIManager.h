@@ -55,8 +55,6 @@ class ImageROIManager {
 		 * */
 		bool removeROI(const int & pos);
 
-
-
 };
 
 }
