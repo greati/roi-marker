@@ -12,9 +12,9 @@ class Point {
 		/**
 		 * Constructor.
 		 * */
-		Point (const int x_, const int y_) x {x_}, y {y_} {}
+		Point (const int x_, const int y_) : x {x_}, y {y_} {}
 
-}
+};
 
 }
 #endif

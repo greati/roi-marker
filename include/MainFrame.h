@@ -5,6 +5,7 @@
 #ifndef WX_PRECOMP
 	#include <wx/wx.h>
 #endif
+#include "Point.h"
 
 /**
  * The main frame of the application.
@@ -25,6 +26,13 @@ class MainFrame : public wxFrame {
 		};
 
 	private:
+
+		wxStaticText* ulc_text;
+		wxStaticText* drc_text;
+
+		roi::Point ulc {-1, -1};
+		roi::Point drc {-1, -1};
+
 		void OnHello(wxCommandEvent& event);
 		
 		void OnMouseMoved(wxMouseEvent& event);
