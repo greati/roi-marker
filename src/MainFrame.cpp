@@ -47,15 +47,19 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	vbox_controls->Add(done_button);
 	vbox_controls->Add(next_button);
 
-	// Add information texts
+	// Add information texts + reset buttons
+	wxButton* reset_ulc_button = new wxButton(global_panel, -1, wxT("Reset"));
+	wxButton* reset_drc_button = new wxButton(global_panel, -1, wxT("Reset"));
 	wxStaticText* first_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("First point:"));
 	wxStaticText* second_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("Second point:"));
 	ulc_text = new wxStaticText(global_panel, wxID_ANY, wxT("(-1,-1)"));
 	drc_text = new wxStaticText(global_panel, wxID_ANY, wxT("(-1,-1)"));
 	vbox_controls->Add(first_point_txt);
 	vbox_controls->Add(ulc_text);
+	vbox_controls->Add(reset_ulc_button);
 	vbox_controls->Add(second_point_txt);
 	vbox_controls->Add(drc_text);
+	vbox_controls->Add(reset_drc_button);
 
 	// Add listbox for multiple ROIs
 	wxListCtrl* roi_list_box = new wxListCtrl(global_panel, wxID_ANY,
@@ -106,8 +110,6 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 }
 
 void MainFrame::OnImageClick(wxMouseEvent& event) {
-	//wxMessageBox("This is ROI-Marker.", "About", wxOK | wxICON_INFORMATION);
-
 	// Selecting the first point
 	if (ulc.x == -1) {
 		ulc.x = event.GetX();
