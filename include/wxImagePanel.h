@@ -9,7 +9,7 @@ class wxImagePanel : public wxPanel {
 	wxImage image;
 
 	public:
-		wxImagePanel(wxFrame* parent, wxString file, wxBitmapType format);
+		wxImagePanel(wxWindow* parent, wxString file, wxBitmapType format);
 		void paintEvent(wxPaintEvent& evt);
 		void paintNow();
 

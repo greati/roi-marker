@@ -8,6 +8,7 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(MainFrame::ID_Hello, MainFrame::OnHello)
 	EVT_MENU(wxID_EXIT, MainFrame::OnExit)
 	EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
+	EVT_MOTION(MainFrame::OnMouseMoved)
 wxEND_EVENT_TABLE()
 
 MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
@@ -15,58 +16,63 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
 	//--- Arranging the layout ---//
 	
-	// Vertical box (the entire frame)
-	wxBoxSizer* vbox_all = new wxBoxSizer(wxVERTICAL);
+	/**
+	 * 1 - Put a BoxSizer (hbox_all) into the entire frame
+	 * 2 - Put a Panel (global_panel) inside hbox_all
+	 *
+	 *
+	 * */
 	
-	// Horizontal box (for the image)
-	wxBoxSizer* hbox_image = new wxBoxSizer(wxHORIZONTAL);
+	wxPanel* global_panel = new wxPanel(this, -1);
+	//global_panel->SetBackgroundColour(wxColour(* wxBLACK));
 
-	// Horizontal box (for the informations and buttons)
-	wxBoxSizer* hbox_controls = new wxBoxSizer(wxHORIZONTAL);
+	//-- Sizers --//
+	wxBoxSizer* hbox_all = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* vbox_image = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer* vbox_controls = new wxBoxSizer(wxVERTICAL);
 
-	// Vertical box (for marker informations)
-	wxBoxSizer* vbox_controls_informations = new wxBoxSizer(wxVERTICAL);
+	//-- Image --//
+	wxImagePanel* image_panel = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG);	
+	//image_panel->SetBackgroundColour(wxColour(* wxGREEN));
+	vbox_image->Add(image_panel, 1, wxEXPAND);
+	hbox_all->Add(vbox_image, 1, wxEXPAND);		// Image stage expands horizontally and vertically
 
-	// Vertical box (for marker buttons)
-	wxBoxSizer* vbox_controls_buttons = new wxBoxSizer(wxVERTICAL);
-
-	// Add image stage drawing component
-	wxImagePanel* imagePanel = new wxImagePanel(this, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG);	
-	hbox_image->Add(imagePanel, 1, wxEXPAND);
+	//-- Controls --//
+	//wxPanel* control_panel = new wxPanel(global_panel, -1);
+	//control_panel->SetBackgroundColour(wxColour(* wxWHITE));
 
 	// Add control buttons
-	wxButton* done_button = new wxButton(this, -1, wxT("Done"));
-	wxButton* next_button = new wxButton(this, -1, wxT("Next"));
-	vbox_controls_buttons->Add(done_button);
-	vbox_controls_buttons->Add(next_button);
+	wxButton* done_button = new wxButton(global_panel, -1, wxT("Done"));
+	wxButton* next_button = new wxButton(global_panel, -1, wxT("Next"));
+	vbox_controls->Add(done_button);
+	vbox_controls->Add(next_button);
 
 	// Add information texts
-	wxStaticText* first_point_txt = new wxStaticText(this, wxID_ANY, wxT("First point:"));
-	wxStaticText* second_point_txt = new wxStaticText(this, wxID_ANY, wxT("Second point:"));
-	vbox_controls_informations->Add(first_point_txt);
-	vbox_controls_informations->Add(second_point_txt);
+	wxStaticText* first_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("First point:"));
+	wxStaticText* second_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("Second point:"));
+	vbox_controls->Add(first_point_txt);
+	vbox_controls->Add(second_point_txt);
 
 	// Add listbox for multiple ROIs
-	wxListCtrl* roi_list_box = new wxListCtrl(this, wxID_ANY,
+	wxListCtrl* roi_list_box = new wxListCtrl(global_panel, wxID_ANY,
 		                       wxDefaultPosition, wxSize(200,100),
 				       wxLC_LIST | wxBORDER_THEME);	
 	roi_list_box->InsertItem(0, wxT("Teste"));
 	roi_list_box->InsertItem(1, wxT("Teste"));
-	hbox_controls->Add(roi_list_box);
+	vbox_controls->Add(roi_list_box);
 
 	// Add buttons for editing the listbox
-	wxButton* add_roi_button = new wxButton(this, -1, wxT("+"));
-	wxButton* remove_roi_button = new wxButton(this, -1, wxT("-"));
-	vbox_controls_informations->Add(add_roi_button);
-	vbox_controls_informations->Add(remove_roi_button);
+	wxButton* add_roi_button = new wxButton(global_panel, -1, wxT("+"));
+	wxButton* remove_roi_button = new wxButton(global_panel, -1, wxT("-"));
+	vbox_controls->Add(add_roi_button);
+	vbox_controls->Add(remove_roi_button);
 
-	// Making the panel hierarchy
-	vbox_all->Add(hbox_image, 1, wxEXPAND);
-	vbox_all->Add(hbox_controls, 0, wxEXPAND | wxALL | wxALIGN_RIGHT | wxRIGHT | wxBOTTOM, 10);
-	hbox_controls->Add(vbox_controls_informations, 1, wxEXPAND);
-	hbox_controls->Add(vbox_controls_buttons, 0, wxEXPAND);
+	//vbox_controls->Add(control_panel, 1);
+	hbox_all->Add(vbox_controls, 0, wxEXPAND);	// Controls expands only vertically
 
-	SetSizerAndFit(vbox_all);
+	global_panel->SetSizer(hbox_all);
+
+	image_panel->Connect( wxID_ANY, wxEVT_MOTION , wxMouseEventHandler(MainFrame::OnMouseMoved),NULL,this);
 
 	//---n Building the menu ---//
 	wxMenu* menuFile = new wxMenu;
@@ -86,6 +92,16 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	//--- Status bar ---//
 	CreateStatusBar();
 	SetStatusText("Welcome to ROI-Marker!");
+
+	//-- Center window --//
+	Centre();
+
+	//-- Setting the icon --//
+	//SetIcon(wxIcon(wxT("/path/to/icon")); 
+}
+
+void MainFrame::OnMouseMoved(wxMouseEvent& event) {
+	SetStatusText("("+wxString::FromDouble(event.GetX())+","+wxString::FromDouble(event.GetY())+ ")");
 }
 
 void MainFrame::OnExit(wxCommandEvent& event) {

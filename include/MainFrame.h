@@ -21,12 +21,14 @@ class MainFrame : public wxFrame {
 		 * Holds ID's for events.
 		 * */
 		enum {
-			ID_Hello = 1
-
+			ID_Hello = 1 
 		};
 
 	private:
 		void OnHello(wxCommandEvent& event);
+		
+		void OnMouseMoved(wxMouseEvent& event);
+
 		void OnExit(wxCommandEvent& event);
 		void OnAbout(wxCommandEvent& event);
 

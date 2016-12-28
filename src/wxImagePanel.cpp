@@ -4,7 +4,7 @@ wxBEGIN_EVENT_TABLE(wxImagePanel, wxPanel)
 	EVT_PAINT(wxImagePanel::paintEvent)
 wxEND_EVENT_TABLE()
 
-wxImagePanel::wxImagePanel(wxFrame* parent, wxString file, wxBitmapType format) : wxPanel {parent} {
+wxImagePanel::wxImagePanel(wxWindow* parent, wxString file, wxBitmapType format) : wxPanel {parent} {
 	// Load the image
 	if (!image.LoadFile(file, format)) {
 		std::cout << "Image not loaded" << std::endl;	
