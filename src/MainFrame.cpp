@@ -69,12 +69,11 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	roi_list_box->InsertColumn(1, wxT("#"));
 	roi_list_box->InsertColumn(2, wxT("ULC"));
 	roi_list_box->InsertColumn(3, wxT("DRC"));
-	roi_list_box->InsertItem(1,wxT("Test"));
 	vbox_controls->Add(roi_list_box);
 
 	// Add buttons for editing the listbox
-	wxButton* add_roi_button = new wxButton(global_panel, -1, wxT("+"));
-	wxButton* remove_roi_button = new wxButton(global_panel, -1, wxT("-"));
+	wxButton* add_roi_button = new wxButton(global_panel, MainFrame::ID_AddROI, wxT("+"));
+	wxButton* remove_roi_button = new wxButton(global_panel, MainFrame::ID_RemoveROI, wxT("-"));
 	vbox_controls->Add(add_roi_button);
 	vbox_controls->Add(remove_roi_button);
 
@@ -88,6 +87,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	image_panel->Connect( wxID_ANY, wxEVT_LEFT_DOWN , wxMouseEventHandler(MainFrame::OnImageClick),NULL,this);
 	Connect(MainFrame::ID_Reset_1, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnReset1Pressed));
 	Connect(MainFrame::ID_Reset_2, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnReset2Pressed));
+	Connect(MainFrame::ID_AddROI, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnAddROIPressed));
+	Connect(MainFrame::ID_RemoveROI, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnRemoveROIPressed));
 
 	//---n Building the menu ---//
 	wxMenu* menuFile = new wxMenu;
@@ -141,6 +142,26 @@ void MainFrame::OnReset2Pressed(wxCommandEvent& event) {
 	drc_text->SetLabel("(-1,-1)");
 }
 
+void MainFrame::OnAddROIPressed(wxCommandEvent& event) {
+	// TODO Here I'll probably have to fix the rectangle points
+
+	// For now, consider the user will give the right rectangle
+	imageROIManager.addROI(ulc, drc);		
+	populateROIListBox(imageROIManager.getROIs());
+}
+
+void MainFrame::OnRemoveROIPressed(wxCommandEvent& event) {
+	long itemIndex = -1;
+
+	while ((itemIndex = roi_list_box->GetNextItem(itemIndex, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != wxNOT_FOUND) {
+		long roiIndex;
+		(roi_list_box->GetItemText(itemIndex)).ToLong(&roiIndex);
+		imageROIManager.removeROI(roiIndex);		
+	}	
+
+	populateROIListBox(imageROIManager.getROIs());
+}
+
 void MainFrame::OnMouseMoved(wxMouseEvent& event) {
 	SetStatusText("("+wxString::FromDouble(event.GetX())+","+wxString::FromDouble(event.GetY())+ ")");
 }
@@ -158,9 +179,10 @@ void MainFrame::OnHello(wxCommandEvent& event) {
 }
 
 void MainFrame::populateROIListBox(const std::vector<roi::Rectangle> rois) {
+	roi_list_box->DeleteAllItems();
 	for (unsigned int i = 0; i < rois.size(); ++i) {
-		roi_list_box->InsertItem(1, wxString::Format("%d",i));		
-		roi_list_box->InsertItem(2, wxString::Format("%d", "(" + rois[i].ulc.x) + "," + wxString::Format("%d", rois[i].ulc.y) + ")");		
-		roi_list_box->InsertItem(3, wxString::Format("%d", "(" + rois[i].drc.x) + "," + wxString::Format("%d", rois[i].drc.y) + ")");		
+		long item_index = roi_list_box->InsertItem(0, wxString::Format("%d",i));		
+		roi_list_box->SetItem(item_index, 1, "(" + wxString::Format("%d",rois[i].ulc.x) + "," + wxString::Format("%d", rois[i].ulc.y) + ")");
+		roi_list_box->SetItem(item_index, 2, "(" + wxString::Format("%d",rois[i].drc.x) + "," + wxString::Format("%d", rois[i].drc.y) + ")");
 	}
 }

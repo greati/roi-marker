@@ -5,6 +5,7 @@
 #ifndef WX_PRECOMP
 	#include <wx/wx.h>
 #endif
+#include "ImageROIManager.h"
 #include "Point.h"
 #include "Rectangle.h"
 #include "wx/listctrl.h"
@@ -27,10 +28,14 @@ class MainFrame : public wxFrame {
 		enum {
 			ID_Hello = 1,
 			ID_Reset_1 = 2,
-			ID_Reset_2 = 3
+			ID_Reset_2 = 3,
+			ID_AddROI = 4,
+			ID_RemoveROI = 5
 		};
 
 	private:
+
+		roi::ImageROIManager imageROIManager;
 
 		wxStaticText* ulc_text;
 		wxStaticText* drc_text;
@@ -46,6 +51,8 @@ class MainFrame : public wxFrame {
 		// Button handlers
 		void OnReset1Pressed(wxCommandEvent& event);
 		void OnReset2Pressed(wxCommandEvent& event);
+		void OnAddROIPressed(wxCommandEvent& event);
+		void OnRemoveROIPressed(wxCommandEvent& event);
 
 		// Mouse handlers
 		void OnMouseMoved(wxMouseEvent& event);

@@ -3,6 +3,8 @@
 
 #include "Rectangle.h"
 #include "Point.h"
+#include <string>
+#include <vector>
 
 namespace roi {
 
@@ -18,6 +20,12 @@ class ImageROIManager {
 		 *
 		 * */
 		ImageROIManager();
+
+		/**
+		 * Return the vector of ROIs.
+		 *
+		 * */
+		const std::vector<roi::Rectangle> & getROIs() const;
 
 		/**
 		 * Takes an image path and try to load it's 
@@ -54,6 +62,12 @@ class ImageROIManager {
 		 *
 		 * */
 		bool removeROI(const int & pos);
+
+		/**
+		 * Clear the vector of ROIs.
+		 *
+		 * */
+		void clearROIs();
 
 };
 
