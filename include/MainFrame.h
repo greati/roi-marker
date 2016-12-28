@@ -6,6 +6,9 @@
 	#include <wx/wx.h>
 #endif
 #include "Point.h"
+#include "Rectangle.h"
+#include "wx/listctrl.h"
+#include <vector>
 
 /**
  * The main frame of the application.
@@ -22,23 +25,34 @@ class MainFrame : public wxFrame {
 		 * Holds ID's for events.
 		 * */
 		enum {
-			ID_Hello = 1 
+			ID_Hello = 1,
+			ID_Reset_1 = 2,
+			ID_Reset_2 = 3
 		};
 
 	private:
 
 		wxStaticText* ulc_text;
 		wxStaticText* drc_text;
+		wxListCtrl* roi_list_box;
 
 		roi::Point ulc {-1, -1};
 		roi::Point drc {-1, -1};
 
-		void OnHello(wxCommandEvent& event);
-		
-		void OnMouseMoved(wxMouseEvent& event);
+		//--- Helpers ---//
+		void populateROIListBox(const std::vector<roi::Rectangle> rois);
 
+		//--- Event handlers ---//
+		// Button handlers
+		void OnReset1Pressed(wxCommandEvent& event);
+		void OnReset2Pressed(wxCommandEvent& event);
+
+		// Mouse handlers
+		void OnMouseMoved(wxMouseEvent& event);
 		void OnImageClick(wxMouseEvent& event);
 
+		// Menu button handlers
+		void OnHello(wxCommandEvent& event);
 		void OnExit(wxCommandEvent& event);
 		void OnAbout(wxCommandEvent& event);
 

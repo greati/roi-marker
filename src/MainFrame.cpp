@@ -1,6 +1,5 @@
 #include "MainFrame.h"
 #include "wxImagePanel.h"
-#include "wx/listctrl.h"
 
 class MainFrame;
 
@@ -48,10 +47,10 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	vbox_controls->Add(next_button);
 
 	// Add information texts + reset buttons
-	wxButton* reset_ulc_button = new wxButton(global_panel, -1, wxT("Reset"));
-	wxButton* reset_drc_button = new wxButton(global_panel, -1, wxT("Reset"));
-	wxStaticText* first_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("First point:"));
-	wxStaticText* second_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("Second point:"));
+	wxButton* reset_ulc_button = new wxButton(global_panel, MainFrame::ID_Reset_1, wxT("Reset"));
+	wxButton* reset_drc_button = new wxButton(global_panel, MainFrame::ID_Reset_2, wxT("Reset"));
+	wxStaticText* first_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("Upper left corner:"));
+	wxStaticText* second_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("Lower right corner:"));
 	ulc_text = new wxStaticText(global_panel, wxID_ANY, wxT("(-1,-1)"));
 	drc_text = new wxStaticText(global_panel, wxID_ANY, wxT("(-1,-1)"));
 	vbox_controls->Add(first_point_txt);
@@ -62,11 +61,15 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	vbox_controls->Add(reset_drc_button);
 
 	// Add listbox for multiple ROIs
-	wxListCtrl* roi_list_box = new wxListCtrl(global_panel, wxID_ANY,
+	roi_list_box = new wxListCtrl(global_panel, wxID_ANY,
 		                       wxDefaultPosition, wxSize(200,100),
-				       wxLC_LIST | wxBORDER_THEME);	
-	roi_list_box->InsertItem(0, wxT("Teste"));
-	roi_list_box->InsertItem(1, wxT("Teste"));
+				       wxLC_REPORT | wxBORDER_THEME);	
+	//roi_list_box->InsertItem(0, wxT("Teste"));
+	//roi_list_box->InsertItem(1, wxT("Teste"));
+	roi_list_box->InsertColumn(1, wxT("#"));
+	roi_list_box->InsertColumn(2, wxT("ULC"));
+	roi_list_box->InsertColumn(3, wxT("DRC"));
+	roi_list_box->InsertItem(1,wxT("Test"));
 	vbox_controls->Add(roi_list_box);
 
 	// Add buttons for editing the listbox
@@ -80,8 +83,11 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
 	global_panel->SetSizer(hbox_all);
 
+	//--- Events ---//
 	image_panel->Connect( wxID_ANY, wxEVT_MOTION , wxMouseEventHandler(MainFrame::OnMouseMoved),NULL,this);
 	image_panel->Connect( wxID_ANY, wxEVT_LEFT_DOWN , wxMouseEventHandler(MainFrame::OnImageClick),NULL,this);
+	Connect(MainFrame::ID_Reset_1, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnReset1Pressed));
+	Connect(MainFrame::ID_Reset_2, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnReset2Pressed));
 
 	//---n Building the menu ---//
 	wxMenu* menuFile = new wxMenu;
@@ -123,6 +129,18 @@ void MainFrame::OnImageClick(wxMouseEvent& event) {
 	}
 }
 
+void MainFrame::OnReset1Pressed(wxCommandEvent& event) {
+	ulc.x = -1;
+	ulc.y = -1;
+	ulc_text->SetLabel("(-1,-1)");
+}
+
+void MainFrame::OnReset2Pressed(wxCommandEvent& event) {
+	drc.x = -1;
+	drc.y = -1;
+	drc_text->SetLabel("(-1,-1)");
+}
+
 void MainFrame::OnMouseMoved(wxMouseEvent& event) {
 	SetStatusText("("+wxString::FromDouble(event.GetX())+","+wxString::FromDouble(event.GetY())+ ")");
 }
@@ -139,3 +157,10 @@ void MainFrame::OnHello(wxCommandEvent& event) {
 	wxLogMessage("Hello!");
 }
 
+void MainFrame::populateROIListBox(const std::vector<roi::Rectangle> rois) {
+	for (unsigned int i = 0; i < rois.size(); ++i) {
+		roi_list_box->InsertItem(1, wxString::Format("%d",i));		
+		roi_list_box->InsertItem(2, wxString::Format("%d", "(" + rois[i].ulc.x) + "," + wxString::Format("%d", rois[i].ulc.y) + ")");		
+		roi_list_box->InsertItem(3, wxString::Format("%d", "(" + rois[i].drc.x) + "," + wxString::Format("%d", rois[i].drc.y) + ")");		
+	}
+}

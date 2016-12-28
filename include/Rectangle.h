@@ -18,7 +18,7 @@ class Rectangle {
 		 *
 		 * */
 		Rectangle(const roi::Point & ulc_, const roi::Point & drc_) : ulc {ulc_}, drc{drc_} {}
-}
+};
 
 }
 #endif
