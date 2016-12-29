@@ -46,9 +46,16 @@ void wxImagePanel::paintROIs(const std::vector<roi::Rectangle> rois) {
 	dc.SetPen( wxPen( wxColor(255,0,0), 1 ) ); // 10-pixels-thick pink outline
 	for (unsigned int i = 0; i < rois.size(); ++i) {
 		dc.DrawRectangle( rois[i].ulc.x, rois[i].ulc.y, rois[i].drc.x - rois[i].ulc.x, rois[i].drc.y - rois[i].ulc.y);
+		dc.SetTextForeground(wxColour(255,0,0));
+		dc.DrawText(wxString::Format(wxT("%d"),i), rois[i].ulc.x, rois[i].ulc.y);
 	}
 }
 
+void wxImagePanel::setImage(const wxImage & _image) {
+	image = _image;
+	image.Rescale(resize_width, resize_height);
+	paintNow();
+}
 
 wxImage & wxImagePanel::getImage() {
 	return image;

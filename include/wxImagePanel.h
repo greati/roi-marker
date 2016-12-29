@@ -18,11 +18,7 @@ class wxImagePanel : public wxPanel {
 
 		wxImage & getImage();
 
-		void setImage(const wxImage & _image) {
-			image = _image;
-			image.Rescale(resize_width, resize_height);
-			paintNow();
-		}
+		void setImage(const wxImage & _image);
 
 		void paintEvent(wxPaintEvent& evt);
 		void paintNow();
