@@ -51,6 +51,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	wxButton* reset_drc_button = new wxButton(global_panel, MainFrame::ID_Reset_2, wxT("Reset"));
 	wxStaticText* first_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("Upper left corner:"));
 	wxStaticText* second_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("Lower right corner:"));
+	roi_preview = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG, 150, 50);	
+
 	ulc_text = new wxStaticText(global_panel, wxID_ANY, wxT("(-1,-1)"));
 	drc_text = new wxStaticText(global_panel, wxID_ANY, wxT("(-1,-1)"));
 	vbox_controls->Add(first_point_txt);
@@ -59,6 +61,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	vbox_controls->Add(second_point_txt);
 	vbox_controls->Add(drc_text);
 	vbox_controls->Add(reset_drc_button);
+	vbox_controls->Add(roi_preview, 1, wxEXPAND);
 
 	// Add listbox for multiple ROIs
 	roi_list_box = new wxListCtrl(global_panel, wxID_ANY,
@@ -127,6 +130,12 @@ void MainFrame::OnImageClick(wxMouseEvent& event) {
 		drc.x = event.GetX();
 		drc.y = event.GetY();
 		drc_text->SetLabel("("+wxString::FromDouble(event.GetX())+","+wxString::FromDouble(event.GetY())+ ")");
+
+		// Update the preview
+		wxRect clipRect {ulc.x, ulc.y, drc.x - ulc.x, drc.y - ulc.y};
+		wxImage prev = image_panel->getImage().GetSubImage(clipRect);
+		roi_preview->setImage(prev);
+
 	}
 }
 

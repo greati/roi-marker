@@ -9,9 +9,21 @@
 class wxImagePanel : public wxPanel {
 	
 	wxImage image;
+	int resize_width;
+	int resize_height;
 
 	public:
 		wxImagePanel(wxWindow* parent, wxString file, wxBitmapType format);
+		wxImagePanel(wxWindow* parent, wxString file, wxBitmapType format, int resize_width, int resize_height);
+
+		wxImage & getImage();
+
+		void setImage(const wxImage & _image) {
+			image = _image;
+			image.Rescale(resize_width, resize_height);
+			paintNow();
+		}
+
 		void paintEvent(wxPaintEvent& evt);
 		void paintNow();
 

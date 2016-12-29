@@ -42,6 +42,7 @@ class MainFrame : public wxFrame {
 		wxStaticText* drc_text;
 		wxListCtrl* roi_list_box;
 		wxImagePanel* image_panel;
+		wxImagePanel* roi_preview;
 
 		roi::Point ulc {-1, -1};
 		roi::Point drc {-1, -1};

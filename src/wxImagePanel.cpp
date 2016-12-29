@@ -13,6 +13,16 @@ wxImagePanel::wxImagePanel(wxWindow* parent, wxString file, wxBitmapType format)
 	}
 }
 
+wxImagePanel::wxImagePanel(wxWindow* parent, wxString file, wxBitmapType format, int _resize_width, int _resize_height) 
+	: wxPanel {parent}, resize_width {_resize_width}, resize_height {_resize_height} {
+	// Load the image
+	if (!image.LoadFile(file, format)) {
+		std::cout << "Image not loaded" << std::endl;	
+	} else {
+		image.Rescale(resize_width, resize_height);	
+	}
+}
+
 void wxImagePanel::paintEvent(wxPaintEvent& evt){
 	wxPaintDC dc(this);
 	render(dc);
@@ -38,3 +48,9 @@ void wxImagePanel::paintROIs(const std::vector<roi::Rectangle> rois) {
 		dc.DrawRectangle( rois[i].ulc.x, rois[i].ulc.y, rois[i].drc.x - rois[i].ulc.x, rois[i].drc.y - rois[i].ulc.y);
 	}
 }
+
+
+wxImage & wxImagePanel::getImage() {
+	return image;
+}
+
