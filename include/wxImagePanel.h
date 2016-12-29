@@ -3,6 +3,8 @@
 
 #include <wx/wx.h>
 #include <wx/sizer.h>
+#include <vector>
+#include "Rectangle.h"
 
 class wxImagePanel : public wxPanel {
 	
@@ -14,6 +16,7 @@ class wxImagePanel : public wxPanel {
 		void paintNow();
 
 		void render(wxDC& dc);
+		void paintROIs(const std::vector<roi::Rectangle> rois);
 
 		DECLARE_EVENT_TABLE();
 };

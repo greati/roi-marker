@@ -31,7 +31,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	wxBoxSizer* vbox_controls = new wxBoxSizer(wxVERTICAL);
 
 	//-- Image --//
-	wxImagePanel* image_panel = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG);	
+	image_panel = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG);	
 	//image_panel->SetBackgroundColour(wxColour(* wxGREEN));
 	vbox_image->Add(image_panel, 1, wxEXPAND);
 	hbox_all->Add(vbox_image, 1, wxEXPAND);		// Image stage expands horizontally and vertically
@@ -148,6 +148,15 @@ void MainFrame::OnAddROIPressed(wxCommandEvent& event) {
 	// For now, consider the user will give the right rectangle
 	imageROIManager.addROI(ulc, drc);		
 	populateROIListBox(imageROIManager.getROIs());
+	image_panel->paintROIs(imageROIManager.getROIs());
+
+	ulc.x = -1;
+	ulc.y = -1;
+	ulc_text->SetLabel("(-1,-1)");
+	drc.x = -1;
+	drc.y = -1;
+	drc_text->SetLabel("(-1,-1)");
+
 }
 
 void MainFrame::OnRemoveROIPressed(wxCommandEvent& event) {
@@ -160,6 +169,7 @@ void MainFrame::OnRemoveROIPressed(wxCommandEvent& event) {
 	}	
 
 	populateROIListBox(imageROIManager.getROIs());
+	image_panel->paintROIs(imageROIManager.getROIs());
 }
 
 void MainFrame::OnMouseMoved(wxMouseEvent& event) {
@@ -186,3 +196,5 @@ void MainFrame::populateROIListBox(const std::vector<roi::Rectangle> rois) {
 		roi_list_box->SetItem(item_index, 2, "(" + wxString::Format("%d",rois[i].drc.x) + "," + wxString::Format("%d", rois[i].drc.y) + ")");
 	}
 }
+
+

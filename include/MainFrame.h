@@ -6,6 +6,7 @@
 	#include <wx/wx.h>
 #endif
 #include "ImageROIManager.h"
+#include "wxImagePanel.h"
 #include "Point.h"
 #include "Rectangle.h"
 #include "wx/listctrl.h"
@@ -40,6 +41,7 @@ class MainFrame : public wxFrame {
 		wxStaticText* ulc_text;
 		wxStaticText* drc_text;
 		wxListCtrl* roi_list_box;
+		wxImagePanel* image_panel;
 
 		roi::Point ulc {-1, -1};
 		roi::Point drc {-1, -1};

@@ -27,3 +27,14 @@ void wxImagePanel::render(wxDC& dc) {
 	dc.DrawBitmap(image, 0, 0, false);
 }
 
+void wxImagePanel::paintROIs(const std::vector<roi::Rectangle> rois) {
+	wxPaintDC dc(this);
+	dc.Clear();
+	dc.DrawBitmap(image, 0, 0, false);
+	wxColour* transp = new wxColour(0, 0, 200, 0);
+	dc.SetBrush(*transp); // blue filling
+	dc.SetPen( wxPen( wxColor(255,0,0), 1 ) ); // 10-pixels-thick pink outline
+	for (unsigned int i = 0; i < rois.size(); ++i) {
+		dc.DrawRectangle( rois[i].ulc.x, rois[i].ulc.y, rois[i].drc.x - rois[i].ulc.x, rois[i].drc.y - rois[i].ulc.y);
+	}
+}
