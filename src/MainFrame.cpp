@@ -120,6 +120,16 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 }
 
 void MainFrame::OnImageClick(wxMouseEvent& event) {
+	// Reset if two points were already filled
+	if (ulc.x != -1 && drc.x != -1) {
+		drc.x = -1;
+		drc.y = -1;
+		drc_text->SetLabel("(-1,-1)");
+		ulc.x = -1;
+		ulc.y = -1;
+		ulc_text->SetLabel("(-1,-1)");
+	}
+
 	// Selecting the first point
 	if (ulc.x == -1) {
 		ulc.x = event.GetX();
