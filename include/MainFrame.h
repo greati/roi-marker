@@ -35,7 +35,10 @@ class MainFrame : public wxFrame {
 			ID_RemoveROI = 5,
 			ID_Done = 6,
 			ID_Open = 7,
-			ID_FilePickerImages = 8
+			ID_FilePickerImages = 8,
+			ID_DirPickerImages = 9,
+			ID_OpenDir = 10
+
 		};
 
 	private:
@@ -68,6 +71,7 @@ class MainFrame : public wxFrame {
 
 		// Menu button handlers
 		void OnOpen(wxCommandEvent& event);
+		void OnOpenDir(wxCommandEvent& event);
 		void OnHello(wxCommandEvent& event);
 		void OnExit(wxCommandEvent& event);
 		void OnAbout(wxCommandEvent& event);

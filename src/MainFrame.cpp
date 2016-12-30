@@ -8,6 +8,7 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(wxID_EXIT, MainFrame::OnExit)
 	EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
 	EVT_MENU(MainFrame::ID_Open, MainFrame::OnOpen)
+	EVT_MENU(MainFrame::ID_OpenDir, MainFrame::OnOpenDir)
 	EVT_MOTION(MainFrame::OnMouseMoved)
 wxEND_EVENT_TABLE()
 
@@ -102,7 +103,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
 	//---n Building the menu ---//
 	wxMenu* menuFile = new wxMenu;
-	menuFile->Append(ID_Open, "&Open...\tCtrl-O", "Open image(s).");
+	menuFile->Append(ID_Open, "&Load from image(s)...\tCtrl-O", "Load image(s).");
+	menuFile->Append(ID_OpenDir, "&Load from dir...\tCtrl-D", "Load image(s) from dir.");
 	menuFile->AppendSeparator();
 	menuFile->Append(wxID_EXIT);	
 
@@ -214,6 +216,14 @@ void MainFrame::OnHello(wxCommandEvent& event) {
 	wxLogMessage("Hello!");
 }
 
+void MainFrame::OnOpenDir(wxCommandEvent& event) {
+	wxDirDialog * dirPicker = new wxDirDialog(NULL, "Choose a directory", "", wxDD_DEFAULT_STYLE);
+
+	if (dirPicker->ShowModal() == wxID_OK) {
+		// TODO
+	}
+}
+
 void MainFrame::OnOpen(wxCommandEvent& event) {
 	wxFileDialog * filePicker = new wxFileDialog(this, _("Choose file(s) to edit."), wxEmptyString, wxEmptyString, 
 			_("Image Files (*.jpg, *.jpeg, *.png) |*.jpg;*.jpeg;*.png"), wxFD_OPEN, wxDefaultPosition);
@@ -223,6 +233,8 @@ void MainFrame::OnOpen(wxCommandEvent& event) {
 			populateROIListBox(imageROIManager.getROIs());	
 		}
 	}
+
+	//TODO Multiple files.
 }
  
 void MainFrame::OnDonePressed(wxCommandEvent& event) {
