@@ -27,7 +27,7 @@ WARN = -Wall
 # DEBUG FLAGS
 DEBUG = -g
 # LINKING FLAGS
-LIBOPTS = `wx-config --cxxflags --libs`
+LIBOPTS = `wx-config --cxxflags --libs` -lexiv2
 LIBFLAG = -L $(LIBDIR) $(LIBOPTS)
 INCFLAG = -I $(INCDIR)
 LFLAGS = $(DEBUG) $(WARN) $(INCFLAG) $(LIBFLAG)

@@ -1,20 +1,77 @@
 #include "ImageROIManager.h"
+#include <exiv2/exiv2.hpp>
+#include <string>
 
 using namespace roi;
 
-ImageROIManager::ImageROIManager() {}
+ImageROIManager::ImageROIManager(const long & _width, const long & _height) : imageWidth {_width}, imageHeight {_height} {}
 
 const std::vector<roi::Rectangle> & ImageROIManager::getROIs() const { 
 	return rois;
 }
 
-bool ImageROIManager::loadImage(std::string imagePath) {
-	// TODO
+bool ImageROIManager::loadImage(const std::string & imagePath) {
+	// Opening the image for metadata manipulation
+	image = Exiv2::ImageFactory::open(imagePath);
+	if (image.get() == 0) return false;
+	// Read metadata
+	image->readMetadata();
+
+	Exiv2::ExifData &exifData = image->exifData();
+
+	if (!exifData.empty()) {
+		Exiv2::Exifdatum & widthTag = exifData["Exif.Image.ROIs.ImageWidth"];
+		Exiv2::Exifdatum & heightTag = exifData["Exif.Image.ROIs.ImageHeight"];
+		Exiv2::Exifdatum & roisTag = exifData["Exif.Image.ROIs.ROIString"];
+
+		loadedImageWidth = widthTag.value().toLong();
+		loadedImageHeight = heightTag.value().toLong();
+
+		std::string roiString = roisTag.value().toString();
+		size_t c = std::count(roiString.begin(), roiString.end(), ' '); 
+
+		std::stringstream ssroi (roiString);
+
+		for (unsigned int i = 0; i < c / 4; ++i) {
+			// Loaded ROI
+			roi::Rectangle r;
+			ssroi >> r.ulc.x >> r.ulc.y >> r.drc.x >> r.drc.y;
+			loadedRois.push_back(r);
+			
+			// ROIs adjusted for current width and height
+			roi::Rectangle adjustedRoi;
+			adjustedRoi.ulc.x = r.ulc.x * imageWidth / loadedImageWidth;
+			adjustedRoi.ulc.y = r.ulc.y * imageHeight / loadedImageHeight;
+			adjustedRoi.drc.x = r.drc.x * imageWidth / loadedImageWidth;
+			adjustedRoi.drc.y = r.drc.y * imageHeight / loadedImageHeight;
+			rois.push_back(adjustedRoi);
+		}
+
+		return true;
+	}
+
 	return false;
 }
 
 bool ImageROIManager::commit() {
-	//TODO
+	// Prepare ExifData from the vector of rois
+	Exiv2::ExifData exifData;
+
+	exifData["Exif.Image.ROIs.ImageWidth"] = int32_t(imageWidth);
+	exifData["Exif.Image.ROIs.ImageHeight"] = int32_t(imageHeight);
+	
+	std::string roiString = "";
+	for (unsigned int i = 0; i < rois.size(); ++i) {
+		roiString += std::to_string(rois[i].ulc.x) + " " + std::to_string(rois[i].ulc.y) + " " + 
+			std::to_string(rois[i].drc.x) + " " + std::to_string(rois[i].drc.y) + " ";		
+	}
+
+	exifData["Exif.Image.ROIS.ROIString"] = roiString;
+
+	// Write the metadata in the image
+	image->setExifData(exifData);
+	image->writeMetadata();
+
 	return false;
 }
 

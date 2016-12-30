@@ -13,6 +13,11 @@ class Rectangle {
 		roi::Point drc;
 
 		/**
+		 * Default constructor.
+		 * */
+		Rectangle(){}
+
+		/**
 		 * Constructor which creates the Rectangle
 		 * from two roi::Point.
 		 *

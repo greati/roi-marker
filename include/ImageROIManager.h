@@ -5,21 +5,31 @@
 #include "Point.h"
 #include <string>
 #include <vector>
+#include <exiv2/exiv2.hpp>
 
 namespace roi {
 
 class ImageROIManager {
 
 	private:
+		// Current ROIs management
 		std::string imagePath;			// The image being analysed
 		std::vector<roi::Rectangle> rois;	// Vector of ROIs
+		long imageWidth;			// Current image width
+		long imageHeight;			// Current image height
+		Exiv2::Image::AutoPtr image;		// Exiv image representation, for metadata
+
+		// Loaded ROIs storage
+		long loadedImageWidth;
+		long loadedImageHeight;
+		std::vector<roi::Rectangle> loadedRois;	// Vector of ROIs
 
 	public:
 		/**
 		 * Constructor.
 		 *
 		 * */
-		ImageROIManager();
+		ImageROIManager(const long &, const long &);
 
 		/**
 		 * Return the vector of ROIs.
@@ -36,7 +46,7 @@ class ImageROIManager {
 		 * the ROIs.
 		 *
 		 * */
-		bool loadImage(std::string imagePath);
+		bool loadImage(const std::string & imagePath);
 
 		/**
 		 * Commit changes to the image's metatada

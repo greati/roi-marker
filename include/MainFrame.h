@@ -36,7 +36,7 @@ class MainFrame : public wxFrame {
 
 	private:
 
-		roi::ImageROIManager imageROIManager;
+		roi::ImageROIManager imageROIManager {800, 600};
 
 		wxStaticText* ulc_text;
 		wxStaticText* drc_text;

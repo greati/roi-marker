@@ -10,7 +10,12 @@ class Point {
 		int x, y;		
 
 		/**
-		 * Constructor.
+		 * Default constructor.
+		 * */
+		Point() {};
+
+		/**
+		 * Constructor based on coordinates.
 		 * */
 		Point (const int x_, const int y_) : x {x_}, y {y_} {}
 
