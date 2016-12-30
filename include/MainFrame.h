@@ -31,7 +31,8 @@ class MainFrame : public wxFrame {
 			ID_Reset_1 = 2,
 			ID_Reset_2 = 3,
 			ID_AddROI = 4,
-			ID_RemoveROI = 5
+			ID_RemoveROI = 5,
+			ID_Done = 6
 		};
 
 	private:
@@ -56,6 +57,7 @@ class MainFrame : public wxFrame {
 		void OnReset2Pressed(wxCommandEvent& event);
 		void OnAddROIPressed(wxCommandEvent& event);
 		void OnRemoveROIPressed(wxCommandEvent& event);
+		void OnDonePressed(wxCommandEvent& event);
 
 		// Mouse handlers
 		void OnMouseMoved(wxMouseEvent& event);

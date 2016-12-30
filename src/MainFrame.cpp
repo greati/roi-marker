@@ -32,6 +32,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
 	//-- Image --//
 	image_panel = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG);	
+
 	//image_panel->SetBackgroundColour(wxColour(* wxGREEN));
 	vbox_image->Add(image_panel, 1, wxEXPAND);
 	hbox_all->Add(vbox_image, 1, wxEXPAND);		// Image stage expands horizontally and vertically
@@ -41,7 +42,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	//control_panel->SetBackgroundColour(wxColour(* wxWHITE));
 
 	// Add control buttons
-	wxButton* done_button = new wxButton(global_panel, -1, wxT("Done"));
+	wxButton* done_button = new wxButton(global_panel, MainFrame::ID_Done, wxT("Done"));
 	wxButton* next_button = new wxButton(global_panel, -1, wxT("Next"));
 	vbox_controls->Add(done_button);
 	vbox_controls->Add(next_button);
@@ -92,6 +93,11 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	Connect(MainFrame::ID_Reset_2, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnReset2Pressed));
 	Connect(MainFrame::ID_AddROI, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnAddROIPressed));
 	Connect(MainFrame::ID_RemoveROI, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnRemoveROIPressed));
+	Connect(MainFrame::ID_Done, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnDonePressed));
+
+	if(imageROIManager.loadImage("img/test.jpeg")) {
+		populateROIListBox(imageROIManager.getROIs());	
+	}
 
 	//---n Building the menu ---//
 	wxMenu* menuFile = new wxMenu;
@@ -205,6 +211,10 @@ void MainFrame::OnAbout(wxCommandEvent& event) {
 
 void MainFrame::OnHello(wxCommandEvent& event) {
 	wxLogMessage("Hello!");
+}
+ 
+void MainFrame::OnDonePressed(wxCommandEvent& event) {
+	imageROIManager.commit();	
 }
 
 void MainFrame::populateROIListBox(const std::vector<roi::Rectangle> rois) {
