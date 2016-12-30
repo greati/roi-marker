@@ -19,6 +19,7 @@ class wxImagePanel : public wxPanel {
 		wxImage & getImage();
 
 		void setImage(const wxImage & _image);
+		void setImage(const std::string & path, wxBitmapType _format);
 
 		void paintEvent(wxPaintEvent& evt);
 		void paintNow();

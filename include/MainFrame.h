@@ -48,6 +48,7 @@ class MainFrame : public wxFrame {
 		wxStaticText* ulc_text;
 		wxStaticText* drc_text;
 		wxListCtrl* roi_list_box;
+		wxListCtrl* paths_list_box;
 		wxImagePanel* image_panel;
 		wxImagePanel* roi_preview;
 
@@ -60,6 +61,8 @@ class MainFrame : public wxFrame {
 
 		//--- Helpers ---//
 		void populateROIListBox(const std::vector<roi::Rectangle> rois);
+		void populatePathsListBox(const std::vector<std::string> paths);
+		void updateScreenOnLoad();
 
 		//--- Event handlers ---//
 		// Button handlers

@@ -33,7 +33,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	wxBoxSizer* vbox_controls = new wxBoxSizer(wxVERTICAL);
 
 	//-- Image --//
-	image_panel = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG);	
+	image_panel = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG, 800, 600);	
 
 	//image_panel->SetBackgroundColour(wxColour(* wxGREEN));
 	vbox_image->Add(image_panel, 1, wxEXPAND);
@@ -77,11 +77,19 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	roi_list_box->InsertColumn(3, wxT("DRC"));
 	vbox_controls->Add(roi_list_box);
 
-	// Add buttons for editing the listbox
+	// Add buttons for editing the ROIs listbox
 	wxButton* add_roi_button = new wxButton(global_panel, MainFrame::ID_AddROI, wxT("+"));
 	wxButton* remove_roi_button = new wxButton(global_panel, MainFrame::ID_RemoveROI, wxT("-"));
 	vbox_controls->Add(add_roi_button);
 	vbox_controls->Add(remove_roi_button);
+
+	// Add listbox for paths
+	paths_list_box = new wxListCtrl(global_panel, wxID_ANY,
+		                       wxDefaultPosition, wxSize(200,100),
+				       wxLC_REPORT | wxBORDER_THEME);	
+	paths_list_box->InsertColumn(1, wxT("#"));
+	paths_list_box->InsertColumn(2, wxT("Image name"));
+	vbox_controls->Add(paths_list_box);
 
 	//vbox_controls->Add(control_panel, 1);
 	hbox_all->Add(vbox_controls, 0, wxEXPAND);	// Controls expands only vertically
@@ -226,18 +234,27 @@ void MainFrame::OnOpenDir(wxCommandEvent& event) {
 
 void MainFrame::OnOpen(wxCommandEvent& event) {
 	wxFileDialog * filePicker = new wxFileDialog(this, _("Choose file(s) to edit."), wxEmptyString, wxEmptyString, 
-			_("Image Files (*.jpg, *.jpeg, *.png) |*.jpg;*.jpeg;*.png"), wxFD_OPEN, wxDefaultPosition);
+			_("Image Files (*.jpg, *.jpeg, *.png) |*.jpg;*.jpeg;*.png"), wxFD_OPEN | wxFD_MULTIPLE, wxDefaultPosition);
 	if(filePicker->ShowModal() == wxID_OK) {
 
 		wxArrayString selectedPaths;
+		wxArrayString selectedFilenames;
 
 		filePicker->GetPaths(selectedPaths);
+		filePicker->GetFilenames(selectedFilenames);
+
+		std::vector<std::string> loadedFilenames;
 
 		for (unsigned int i = 0; i < selectedPaths.GetCount(); ++i) {
 			loadedPaths.push_back(std::string(selectedPaths[i].mb_str()));
+			loadedFilenames.push_back(std::string(selectedFilenames[i].mb_str()));
 		}
 
+
 		if(!selectedPaths.IsEmpty() && imageROIManager.loadImage(loadedPaths[0])) {
+			currentPathIndex = 0;
+			updateScreenOnLoad();
+			populatePathsListBox(loadedFilenames);
 			populateROIListBox(imageROIManager.getROIs());	
 		}
 	}
@@ -256,4 +273,16 @@ void MainFrame::populateROIListBox(const std::vector<roi::Rectangle> rois) {
 	}
 }
 
+void MainFrame::populatePathsListBox(const std::vector<std::string> paths) {
+	paths_list_box->DeleteAllItems();
+	for (unsigned int i = 0; i < paths.size(); ++i) {
+		long item_index = paths_list_box->InsertItem(0, wxString::Format("%d",i));		
+		paths_list_box->SetItem(item_index, 1, paths[i]);
+	}
+}
 
+void MainFrame::updateScreenOnLoad() {
+	// Update image panel
+	// TODO: check type of image
+	image_panel->setImage(loadedPaths[currentPathIndex], wxBITMAP_TYPE_JPEG);
+}
