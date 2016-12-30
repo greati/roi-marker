@@ -15,6 +15,10 @@ bool ImageROIManager::loadImage(const std::string & imagePath) {
 	// Opening the image for metadata manipulation
 	image = Exiv2::ImageFactory::open(imagePath);
 	if (image.get() == 0) return false;
+
+	rois.clear();
+	loadedRois.clear();	
+
 	// Read metadata
 	image->readMetadata();
 	

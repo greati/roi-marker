@@ -243,19 +243,17 @@ void MainFrame::OnOpen(wxCommandEvent& event) {
 		filePicker->GetPaths(selectedPaths);
 		filePicker->GetFilenames(selectedFilenames);
 
-		std::vector<std::string> loadedFilenames;
+		loadedPaths.clear();
+		loadedFilenames.clear();
 
 		for (unsigned int i = 0; i < selectedPaths.GetCount(); ++i) {
 			loadedPaths.push_back(std::string(selectedPaths[i].mb_str()));
 			loadedFilenames.push_back(std::string(selectedFilenames[i].mb_str()));
 		}
 
-
-		if(!selectedPaths.IsEmpty() && imageROIManager.loadImage(loadedPaths[0])) {
+		if(!selectedPaths.IsEmpty()) {
 			currentPathIndex = 0;
 			updateScreenOnLoad();
-			populatePathsListBox(loadedFilenames);
-			populateROIListBox(imageROIManager.getROIs());	
 		}
 	}
 }
@@ -282,7 +280,12 @@ void MainFrame::populatePathsListBox(const std::vector<std::string> paths) {
 }
 
 void MainFrame::updateScreenOnLoad() {
+	// Update manager
+	imageROIManager.loadImage(loadedPaths[currentPathIndex]);
 	// Update image panel
 	// TODO: check type of image
 	image_panel->setImage(loadedPaths[currentPathIndex], wxBITMAP_TYPE_JPEG);
+	// Populate list boxes
+	populatePathsListBox(loadedFilenames);
+	populateROIListBox(imageROIManager.getROIs());	
 }

@@ -57,6 +57,7 @@ class MainFrame : public wxFrame {
 		roi::Point ulc {-1, -1};
 		roi::Point drc {-1, -1};
 		std::vector<std::string> loadedPaths;
+		std::vector<std::string> loadedFilenames;
 		unsigned int currentPathIndex;
 
 		//--- Helpers ---//

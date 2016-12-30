@@ -58,10 +58,13 @@ void wxImagePanel::setImage(const wxImage & _image) {
 }
 
 void wxImagePanel::setImage(const std::string & path, wxBitmapType _format) {
-	if (!image.LoadFile(path, _format)) {
+	wxImage newImage;
+	if (!newImage.LoadFile(path, _format)) {
 		std::cout << "Image not loaded" << std::endl;	
 	} else {
-		image.Rescale(resize_width, resize_height);	
+		newImage.Rescale(resize_width, resize_height);	
+		//setImage(newImage);
+		image = newImage;
 		paintNow();
 	}
 }
