@@ -7,6 +7,7 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(MainFrame::ID_Hello, MainFrame::OnHello)
 	EVT_MENU(wxID_EXIT, MainFrame::OnExit)
 	EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
+	EVT_MENU(MainFrame::ID_Open, MainFrame::OnOpen)
 	EVT_MOTION(MainFrame::OnMouseMoved)
 wxEND_EVENT_TABLE()
 
@@ -95,13 +96,13 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	Connect(MainFrame::ID_RemoveROI, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnRemoveROIPressed));
 	Connect(MainFrame::ID_Done, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnDonePressed));
 
-	if(imageROIManager.loadImage("img/test.jpeg")) {
-		populateROIListBox(imageROIManager.getROIs());	
-	}
+	//if(imageROIManager.loadImage("img/test.jpeg")) {
+	//	populateROIListBox(imageROIManager.getROIs());	
+	//}
 
 	//---n Building the menu ---//
 	wxMenu* menuFile = new wxMenu;
-	menuFile->Append(ID_Hello, "&Hello...\tCtrl-H", "Help string.");
+	menuFile->Append(ID_Open, "&Open...\tCtrl-O", "Open image(s).");
 	menuFile->AppendSeparator();
 	menuFile->Append(wxID_EXIT);	
 
@@ -211,6 +212,17 @@ void MainFrame::OnAbout(wxCommandEvent& event) {
 
 void MainFrame::OnHello(wxCommandEvent& event) {
 	wxLogMessage("Hello!");
+}
+
+void MainFrame::OnOpen(wxCommandEvent& event) {
+	wxFileDialog * filePicker = new wxFileDialog(this, _("Choose file(s) to edit."), wxEmptyString, wxEmptyString, 
+			_("Image Files (*.jpg, *.jpeg, *.png) |*.jpg;*.jpeg;*.png"), wxFD_OPEN, wxDefaultPosition);
+	if(filePicker->ShowModal() == wxID_OK) {
+		std::string selectedPath = std::string(filePicker->GetPath().mb_str());
+		if(imageROIManager.loadImage(selectedPath)) {
+			populateROIListBox(imageROIManager.getROIs());	
+		}
+	}
 }
  
 void MainFrame::OnDonePressed(wxCommandEvent& event) {

@@ -10,6 +10,7 @@
 #include "Point.h"
 #include "Rectangle.h"
 #include "wx/listctrl.h"
+#include "wx/filepicker.h"
 #include <vector>
 
 /**
@@ -32,7 +33,9 @@ class MainFrame : public wxFrame {
 			ID_Reset_2 = 3,
 			ID_AddROI = 4,
 			ID_RemoveROI = 5,
-			ID_Done = 6
+			ID_Done = 6,
+			ID_Open = 7,
+			ID_FilePickerImages = 8
 		};
 
 	private:
@@ -64,6 +67,7 @@ class MainFrame : public wxFrame {
 		void OnImageClick(wxMouseEvent& event);
 
 		// Menu button handlers
+		void OnOpen(wxCommandEvent& event);
 		void OnHello(wxCommandEvent& event);
 		void OnExit(wxCommandEvent& event);
 		void OnAbout(wxCommandEvent& event);
