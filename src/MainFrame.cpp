@@ -217,7 +217,7 @@ void MainFrame::OnHello(wxCommandEvent& event) {
 }
 
 void MainFrame::OnOpenDir(wxCommandEvent& event) {
-	wxDirDialog * dirPicker = new wxDirDialog(NULL, "Choose a directory", "", wxDD_DEFAULT_STYLE);
+	wxDirDialog * dirPicker = new wxDirDialog(NULL, "Choose a directory", "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
 
 	if (dirPicker->ShowModal() == wxID_OK) {
 		// TODO
@@ -228,13 +228,19 @@ void MainFrame::OnOpen(wxCommandEvent& event) {
 	wxFileDialog * filePicker = new wxFileDialog(this, _("Choose file(s) to edit."), wxEmptyString, wxEmptyString, 
 			_("Image Files (*.jpg, *.jpeg, *.png) |*.jpg;*.jpeg;*.png"), wxFD_OPEN, wxDefaultPosition);
 	if(filePicker->ShowModal() == wxID_OK) {
-		std::string selectedPath = std::string(filePicker->GetPath().mb_str());
-		if(imageROIManager.loadImage(selectedPath)) {
+
+		wxArrayString selectedPaths;
+
+		filePicker->GetPaths(selectedPaths);
+
+		for (unsigned int i = 0; i < selectedPaths.GetCount(); ++i) {
+			loadedPaths.push_back(std::string(selectedPaths[i].mb_str()));
+		}
+
+		if(!selectedPaths.IsEmpty() && imageROIManager.loadImage(loadedPaths[0])) {
 			populateROIListBox(imageROIManager.getROIs());	
 		}
 	}
-
-	//TODO Multiple files.
 }
  
 void MainFrame::OnDonePressed(wxCommandEvent& event) {

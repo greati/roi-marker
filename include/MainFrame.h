@@ -51,8 +51,12 @@ class MainFrame : public wxFrame {
 		wxImagePanel* image_panel;
 		wxImagePanel* roi_preview;
 
+		// State of the application
+		// TODO: Move them to another place, maybe as static attributes
 		roi::Point ulc {-1, -1};
 		roi::Point drc {-1, -1};
+		std::vector<std::string> loadedPaths;
+		unsigned int currentPathIndex;
 
 		//--- Helpers ---//
 		void populateROIListBox(const std::vector<roi::Rectangle> rois);
