@@ -7,6 +7,7 @@
 #endif
 
 #include "MainFrame.h"
+#include "ImageROIManager.h"
 
 /**
  * Main class of the application, responsible
@@ -19,6 +20,8 @@
  * */
 class RoiMarkerApplication : public wxApp {
 
+	private:
+		roi::ImageROIManager imageROIManager;
 	public:
 		/**
 		 * Regarded to the initialization of the

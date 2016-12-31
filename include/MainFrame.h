@@ -23,7 +23,7 @@
 class MainFrame : public wxFrame {
 
 	public:
-		MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
+		MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size, roi::ImageROIManager &);
 
 		/**
 		 * Holds ID's for events.
@@ -42,12 +42,13 @@ class MainFrame : public wxFrame {
 
 		};
 
+		wxBoxSizer* vbox_image;
+
 	private:
 
-		roi::ImageROIManager imageROIManager {800, 600};
+		roi::ImageROIManager & imageROIManager;
 		
 		wxBoxSizer* hbox_all;
-		wxBoxSizer* vbox_image;
 		wxBoxSizer* vbox_controls;
 		wxStaticText* ulc_text;
 		wxStaticText* drc_text;

@@ -30,6 +30,7 @@ class ImageROIManager {
 		 *
 		 * */
 		ImageROIManager(const long &, const long &);
+		ImageROIManager() {};
 
 		/**
 		 * Return the vector of ROIs.

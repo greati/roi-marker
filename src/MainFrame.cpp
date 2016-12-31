@@ -13,8 +13,8 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_SIZE(MainFrame::OnSize)
 wxEND_EVENT_TABLE()
 
-MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
-: wxFrame(NULL, wxID_ANY, title, pos, size) {
+MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size, roi::ImageROIManager & _imageROIManager)
+: wxFrame(NULL, wxID_ANY, title, pos, size), imageROIManager {_imageROIManager} {
 
 	//--- Arranging the layout ---//
 	
@@ -98,9 +98,6 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	global_panel->SetSizer(hbox_all);
 	
 	//--- Configure initial size for the manager ---//
-	wxSize s = vbox_image->GetSize();
-	std::cout << "Initial size: " << s.GetWidth() << " " << s.GetHeight() << std::endl;
-	imageROIManager.updateSize(s.GetWidth(), s.GetHeight());
 
 	//--- Events ---//
 	image_panel->Connect( wxID_ANY, wxEVT_MOTION , wxMouseEventHandler(MainFrame::OnMouseMoved),NULL,this);
@@ -270,12 +267,15 @@ void MainFrame::OnDonePressed(wxCommandEvent& event) {
 }
 
 void MainFrame::OnSize(wxSizeEvent& event) {
+	std::cout << "RESIZED!" << std::endl;
 	wxSize s = vbox_image->GetSize();
-	std::cout << s.GetWidth() << " " << s.GetHeight() << std::endl;
+	std::cout << "From the sizer:" << s.GetWidth() << " " << s.GetHeight() << std::endl;
+	std::cout << "From the event:" << event.GetSize().GetWidth() << " " << event.GetSize().GetHeight() << std::endl;
+	// The panel is doing this (but I don't like it)
 	imageROIManager.updateAfterResize(s.GetWidth(), s.GetHeight());
 	populateROIListBox(imageROIManager.getROIs());	
 	//image_panel->paintROIs(imageROIManager.getROIs());
-
+	//image_panel->paintNow();
 	event.Skip();
 }
 
@@ -297,6 +297,8 @@ void MainFrame::populatePathsListBox(const std::vector<std::string> paths) {
 }
 
 void MainFrame::updateScreenOnLoad() {
+	wxSize s = vbox_image->GetSize();
+	imageROIManager.updateAfterResize(s.GetWidth(), s.GetHeight());
 	// Update manager
 	imageROIManager.loadImage(loadedPaths[currentPathIndex]);
 	// Update image panel

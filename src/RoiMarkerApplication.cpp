@@ -6,8 +6,10 @@ bool RoiMarkerApplication::OnInit() {
 
 	wxInitAllImageHandlers();
 
-	MainFrame* frame = new MainFrame("ROI-Marker", wxPoint(50,50), wxSize(800,800)); 
+	MainFrame* frame = new MainFrame("ROI-Marker", wxPoint(50,50), wxSize(800,800), imageROIManager); 
+
 	frame->Show(true);
+
 	return true;
 }
 

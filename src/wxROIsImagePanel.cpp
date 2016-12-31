@@ -48,6 +48,7 @@ void wxROIsImagePanel::render(wxDC& dc) {
 }
 
 void wxROIsImagePanel::OnSize(wxSizeEvent& event) {
+	imageROIManager.updateAfterResize(event.GetSize().GetWidth(), event.GetSize().GetHeight());
 	Refresh();
 	event.Skip();
 }
