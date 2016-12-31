@@ -10,6 +10,7 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(MainFrame::ID_Open, MainFrame::OnOpen)
 	EVT_MENU(MainFrame::ID_OpenDir, MainFrame::OnOpenDir)
 	EVT_MOTION(MainFrame::OnMouseMoved)
+	EVT_SIZE(MainFrame::OnSize)
 wxEND_EVENT_TABLE()
 
 MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
@@ -33,7 +34,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	wxBoxSizer* vbox_controls = new wxBoxSizer(wxVERTICAL);
 
 	//-- Image --//
-	image_panel = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG, 800, 600);	
+	image_panel = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG, true);	
 
 	//image_panel->SetBackgroundColour(wxColour(* wxGREEN));
 	vbox_image->Add(image_panel, 1, wxEXPAND);
@@ -54,7 +55,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	wxButton* reset_drc_button = new wxButton(global_panel, MainFrame::ID_Reset_2, wxT("Reset"));
 	wxStaticText* first_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("Upper left corner:"));
 	wxStaticText* second_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("Lower right corner:"));
-	roi_preview = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG, 150, 50);	
+	roi_preview = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG, false, 150, 50);	
 
 	ulc_text = new wxStaticText(global_panel, wxID_ANY, wxT("(-1,-1)"));
 	drc_text = new wxStaticText(global_panel, wxID_ANY, wxT("(-1,-1)"));
@@ -160,9 +161,9 @@ void MainFrame::OnImageClick(wxMouseEvent& event) {
 
 		// Update the preview
 		wxRect clipRect {ulc.x, ulc.y, drc.x - ulc.x, drc.y - ulc.y};
-		wxImage prev = image_panel->getImage().GetSubImage(clipRect);
-		roi_preview->setImage(prev);
-
+		//wxImage prev = image_panel->getImage().GetSubImage(clipRect);
+		wxBitmap prev = image_panel->getResized().GetSubBitmap(clipRect);
+		roi_preview->setImage(prev.ConvertToImage());
 	}
 }
 
@@ -260,6 +261,10 @@ void MainFrame::OnOpen(wxCommandEvent& event) {
  
 void MainFrame::OnDonePressed(wxCommandEvent& event) {
 	imageROIManager.commit();	
+}
+
+void MainFrame::OnSize(wxSizeEvent& event) {
+	event.Skip();
 }
 
 void MainFrame::populateROIListBox(const std::vector<roi::Rectangle> rois) {

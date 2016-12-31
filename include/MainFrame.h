@@ -73,6 +73,9 @@ class MainFrame : public wxFrame {
 		void OnRemoveROIPressed(wxCommandEvent& event);
 		void OnDonePressed(wxCommandEvent& event);
 
+		// Size handlers
+		void OnSize(wxSizeEvent& event);
+
 		// Mouse handlers
 		void OnMouseMoved(wxMouseEvent& event);
 		void OnImageClick(wxMouseEvent& event);

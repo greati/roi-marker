@@ -104,3 +104,14 @@ bool ImageROIManager::removeROI(const int & pos) {
 void ImageROIManager::clearROIs() {
 	rois.clear();
 }
+
+void ImageROIManager::updateAfterResize(const int & w, const int & h) {
+	for (unsigned int i = 0; i < rois.size(); ++i) {
+		rois[i].ulc.x = rois[i].ulc.x * w / imageWidth;
+		rois[i].ulc.y = rois[i].ulc.y * h / imageHeight;
+		rois[i].drc.x = rois[i].drc.x * w / imageWidth;
+		rois[i].drc.y = rois[i].drc.y * h / imageHeight;
+	}
+	imageWidth = w;
+	imageHeight = h;
+}

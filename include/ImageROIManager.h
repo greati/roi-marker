@@ -79,6 +79,12 @@ class ImageROIManager {
 		 * */
 		void clearROIs();
 
+		/**
+		 * Update ROIs after image size changes.
+		 *
+		 * */
+		void updateAfterResize(const int & w, const int & h);
+
 };
 
 }

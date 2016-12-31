@@ -2,24 +2,17 @@
 
 wxBEGIN_EVENT_TABLE(wxImagePanel, wxPanel)
 	EVT_PAINT(wxImagePanel::paintEvent)
+	EVT_SIZE(wxImagePanel::OnSize)
 wxEND_EVENT_TABLE()
 
-wxImagePanel::wxImagePanel(wxWindow* parent, wxString file, wxBitmapType format) : wxPanel {parent} {
+wxImagePanel::wxImagePanel(wxWindow* parent, wxString file, wxBitmapType format, bool RESIZABLE, int _w, int _h) 
+	: wxPanel {parent}, resizable {RESIZABLE}, w {_w}, h {_h} {
 	// Load the image
 	if (!image.LoadFile(file, format)) {
 		std::cout << "Image not loaded" << std::endl;	
 	} else {
-		image.Rescale(800, 600);	
-	}
-}
-
-wxImagePanel::wxImagePanel(wxWindow* parent, wxString file, wxBitmapType format, int _resize_width, int _resize_height) 
-	: wxPanel {parent}, resize_width {_resize_width}, resize_height {_resize_height} {
-	// Load the image
-	if (!image.LoadFile(file, format)) {
-		std::cout << "Image not loaded" << std::endl;	
-	} else {
-		image.Rescale(resize_width, resize_height);	
+		if (!resizable)
+			image.Rescale(w, h);	
 	}
 }
 
@@ -34,13 +27,31 @@ void wxImagePanel::paintNow() {
 }
 
 void wxImagePanel::render(wxDC& dc) {
-	dc.DrawBitmap(image, 0, 0, false);
+	if (resizable) {
+		int newh, neww;
+		dc.GetSize(&neww, &newh);
+
+		if (neww != w || newh != h) {
+			resized = wxBitmap(image.Scale(neww, newh, wxIMAGE_QUALITY_HIGH));	
+			w = neww;
+			h = newh;
+		}
+		dc.DrawBitmap(resized, 0, 0, false);
+	} else {
+		dc.DrawBitmap(image, 0, 0, false);
+	}
+}
+
+void wxImagePanel::OnSize(wxSizeEvent& event) {
+	if (resizable) {
+		Refresh();
+		event.Skip();	
+	}
 }
 
 void wxImagePanel::paintROIs(const std::vector<roi::Rectangle> rois) {
 	wxPaintDC dc(this);
-	dc.Clear();
-	dc.DrawBitmap(image, 0, 0, false);
+	//dc.Clear();
 	wxColour* transp = new wxColour(0, 0, 200, 0);
 	dc.SetBrush(*transp); // blue filling
 	dc.SetPen( wxPen( wxColor(255,0,0), 1 ) ); // 10-pixels-thick pink outline
@@ -53,7 +64,9 @@ void wxImagePanel::paintROIs(const std::vector<roi::Rectangle> rois) {
 
 void wxImagePanel::setImage(const wxImage & _image) {
 	image = _image;
-	image.Rescale(resize_width, resize_height);
+	resized = wxBitmap(image.Scale(w, h, wxIMAGE_QUALITY_HIGH));	
+	if (!resizable) 
+		image.Rescale(w, h);
 	paintNow();
 }
 
@@ -62,9 +75,10 @@ void wxImagePanel::setImage(const std::string & path, wxBitmapType _format) {
 	if (!newImage.LoadFile(path, _format)) {
 		std::cout << "Image not loaded" << std::endl;	
 	} else {
-		newImage.Rescale(resize_width, resize_height);	
+		//newImage.Rescale(resize_width, resize_height);	
 		//setImage(newImage);
 		image = newImage;
+		resized = wxBitmap(image.Scale(w, h, wxIMAGE_QUALITY_HIGH));	
 		paintNow();
 	}
 }
@@ -73,3 +87,6 @@ wxImage & wxImagePanel::getImage() {
 	return image;
 }
 
+wxBitmap & wxImagePanel::getResized() {
+	return resized;
+}
