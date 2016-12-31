@@ -5,7 +5,7 @@ wxBEGIN_EVENT_TABLE(wxROIsImagePanel, wxPanel)
 	EVT_SIZE(wxROIsImagePanel::OnSize)
 wxEND_EVENT_TABLE()
 
-wxROIsImagePanel::wxROIsImagePanel(wxWindow* parent, wxString file, wxBitmapType format, ImageROIManager & _imageROIManager)
+wxROIsImagePanel::wxROIsImagePanel(wxWindow* parent, wxString file, wxBitmapType format, roi::ImageROIManager & _imageROIManager)
 : wxPanel{parent}, imageROIManager {_imageROIManager} {
 	if (!image.LoadFile(file, format)) {
 		std::cout << "Image not loaded" << std::endl;	

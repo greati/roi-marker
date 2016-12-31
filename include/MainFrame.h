@@ -7,6 +7,7 @@
 #endif
 #include "ImageROIManager.h"
 #include "wxImagePanel.h"
+#include "wxROIsImagePanel.h"
 #include "Point.h"
 #include "Rectangle.h"
 #include "wx/listctrl.h"
@@ -44,12 +45,15 @@ class MainFrame : public wxFrame {
 	private:
 
 		roi::ImageROIManager imageROIManager {800, 600};
-
+		
+		wxBoxSizer* hbox_all;
+		wxBoxSizer* vbox_image;
+		wxBoxSizer* vbox_controls;
 		wxStaticText* ulc_text;
 		wxStaticText* drc_text;
 		wxListCtrl* roi_list_box;
 		wxListCtrl* paths_list_box;
-		wxImagePanel* image_panel;
+		wxROIsImagePanel* image_panel;
 		wxImagePanel* roi_preview;
 
 		// State of the application

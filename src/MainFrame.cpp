@@ -34,7 +34,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	vbox_controls = new wxBoxSizer(wxVERTICAL);
 
 	//-- Image --//
-	image_panel = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG, true);	
+	image_panel = new wxROIsImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG, imageROIManager);	
 
 	//image_panel->SetBackgroundColour(wxColour(* wxGREEN));
 	vbox_image->Add(image_panel, 1, wxEXPAND);
@@ -185,7 +185,7 @@ void MainFrame::OnAddROIPressed(wxCommandEvent& event) {
 	// For now, consider the user will give the right rectangle
 	imageROIManager.addROI(ulc, drc);		
 	populateROIListBox(imageROIManager.getROIs());
-	image_panel->paintROIs(imageROIManager.getROIs());
+	//image_panel->paintROIs(imageROIManager.getROIs());
 
 	ulc.x = -1;
 	ulc.y = -1;
@@ -206,7 +206,7 @@ void MainFrame::OnRemoveROIPressed(wxCommandEvent& event) {
 	}	
 
 	populateROIListBox(imageROIManager.getROIs());
-	image_panel->paintROIs(imageROIManager.getROIs());
+	//image_panel->paintROIs(imageROIManager.getROIs());
 }
 
 void MainFrame::OnMouseMoved(wxMouseEvent& event) {
@@ -266,7 +266,7 @@ void MainFrame::OnDonePressed(wxCommandEvent& event) {
 void MainFrame::OnSize(wxSizeEvent& event) {
 	wxSize s = vbox_image->GetSize();
 	imageROIManager.updateAfterResize(s.GetWidth(), s.GetHeight());
-	image_panel->paintROIs(imageROIManager.getROIs());
+	//image_panel->paintROIs(imageROIManager.getROIs());
 	event.Skip();
 }
 
