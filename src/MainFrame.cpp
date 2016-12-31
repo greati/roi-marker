@@ -283,8 +283,8 @@ void MainFrame::populateROIListBox(const std::vector<roi::Rectangle> rois) {
 	roi_list_box->DeleteAllItems();
 	for (unsigned int i = 0; i < rois.size(); ++i) {
 		long item_index = roi_list_box->InsertItem(0, wxString::Format("%d",i));		
-		roi_list_box->SetItem(item_index, 1, "(" + wxString::Format("%d",rois[i].ulc.x) + "," + wxString::Format("%d", rois[i].ulc.y) + ")");
-		roi_list_box->SetItem(item_index, 2, "(" + wxString::Format("%d",rois[i].drc.x) + "," + wxString::Format("%d", rois[i].drc.y) + ")");
+		roi_list_box->SetItem(item_index, 1, "(" + wxString::Format("%f",rois[i].ulc.x) + "," + wxString::Format("%f", rois[i].ulc.y) + ")");
+		roi_list_box->SetItem(item_index, 2, "(" + wxString::Format("%f",rois[i].drc.x) + "," + wxString::Format("%f", rois[i].drc.y) + ")");
 	}
 }
 

@@ -7,7 +7,7 @@ class Point {
 
 	public:
 		// Point coordinates
-		int x, y;		
+		double x, y;		
 
 		/**
 		 * Default constructor.
@@ -17,7 +17,7 @@ class Point {
 		/**
 		 * Constructor based on coordinates.
 		 * */
-		Point (const int x_, const int y_) : x {x_}, y {y_} {}
+		Point (const double x_, const double y_) : x {x_}, y {y_} {}
 
 };
 
