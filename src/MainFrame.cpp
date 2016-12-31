@@ -186,6 +186,7 @@ void MainFrame::OnAddROIPressed(wxCommandEvent& event) {
 	imageROIManager.addROI(ulc, drc);		
 	populateROIListBox(imageROIManager.getROIs());
 	//image_panel->paintROIs(imageROIManager.getROIs());
+	image_panel->paintNow();
 
 	ulc.x = -1;
 	ulc.y = -1;
