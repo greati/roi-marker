@@ -96,6 +96,11 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	hbox_all->Add(vbox_controls, 0, wxEXPAND);	// Controls expands only vertically
 
 	global_panel->SetSizer(hbox_all);
+	
+	//--- Configure initial size for the manager ---//
+	wxSize s = vbox_image->GetSize();
+	std::cout << "Initial size: " << s.GetWidth() << " " << s.GetHeight() << std::endl;
+	imageROIManager.updateSize(s.GetWidth(), s.GetHeight());
 
 	//--- Events ---//
 	image_panel->Connect( wxID_ANY, wxEVT_MOTION , wxMouseEventHandler(MainFrame::OnMouseMoved),NULL,this);
@@ -266,8 +271,11 @@ void MainFrame::OnDonePressed(wxCommandEvent& event) {
 
 void MainFrame::OnSize(wxSizeEvent& event) {
 	wxSize s = vbox_image->GetSize();
+	std::cout << s.GetWidth() << " " << s.GetHeight() << std::endl;
 	imageROIManager.updateAfterResize(s.GetWidth(), s.GetHeight());
+	populateROIListBox(imageROIManager.getROIs());	
 	//image_panel->paintROIs(imageROIManager.getROIs());
+
 	event.Skip();
 }
 

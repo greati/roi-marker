@@ -85,6 +85,12 @@ class ImageROIManager {
 		 * */
 		void updateAfterResize(const int & w, const int & h);
 
+		/**
+		 * Update sizes.
+		 *
+		 * */
+		void updateSize(const int & w, const int & h) { imageWidth = w; imageHeight = h;};
+
 };
 
 }
