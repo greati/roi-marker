@@ -50,7 +50,7 @@ void wxImagePanel::OnSize(wxSizeEvent& event) {
 }
 
 void wxImagePanel::paintROIs(const std::vector<roi::Rectangle> rois) {
-	wxPaintDC dc(this);
+	wxClientDC dc(this);
 	//dc.Clear();
 	wxColour* transp = new wxColour(0, 0, 200, 0);
 	dc.SetBrush(*transp); // blue filling

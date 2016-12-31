@@ -29,9 +29,9 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	//global_panel->SetBackgroundColour(wxColour(* wxBLACK));
 
 	//-- Sizers --//
-	wxBoxSizer* hbox_all = new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer* vbox_image = new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer* vbox_controls = new wxBoxSizer(wxVERTICAL);
+	hbox_all = new wxBoxSizer(wxHORIZONTAL);
+	vbox_image = new wxBoxSizer(wxVERTICAL);
+	vbox_controls = new wxBoxSizer(wxVERTICAL);
 
 	//-- Image --//
 	image_panel = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG, true);	
@@ -264,6 +264,9 @@ void MainFrame::OnDonePressed(wxCommandEvent& event) {
 }
 
 void MainFrame::OnSize(wxSizeEvent& event) {
+	wxSize s = vbox_image->GetSize();
+	imageROIManager.updateAfterResize(s.GetWidth(), s.GetHeight());
+	image_panel->paintROIs(imageROIManager.getROIs());
 	event.Skip();
 }
 
