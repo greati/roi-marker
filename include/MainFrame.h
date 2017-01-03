@@ -39,8 +39,9 @@ class MainFrame : public wxFrame {
 			ID_FilePickerImages = 8,
 			ID_DirPickerImages = 9,
 			ID_OpenDir = 10,
-			ID_Next = 11
-
+			ID_Next = 11,
+			ID_RoisList = 12,
+			ID_PathsList = 13
 		};
 
 		wxBoxSizer* vbox_image;
@@ -79,6 +80,10 @@ class MainFrame : public wxFrame {
 		void OnRemoveROIPressed(wxCommandEvent& event);
 		void OnDonePressed(wxCommandEvent& event);
 		void OnNextPressed(wxCommandEvent& event);
+
+		// List handlers
+		void OnRoiListSelected(wxListEvent& event);
+		void OnPathsListSelected(wxListEvent& event);
 
 		// Size handlers
 		void OnSize(wxSizeEvent& event);

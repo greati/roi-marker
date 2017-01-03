@@ -68,7 +68,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	vbox_controls->Add(roi_preview, 1, wxEXPAND);
 
 	// Add listbox for multiple ROIs
-	roi_list_box = new wxListCtrl(global_panel, wxID_ANY,
+	roi_list_box = new wxListCtrl(global_panel, MainFrame::ID_RoisList,
 		                       wxDefaultPosition, wxSize(200,100),
 				       wxLC_REPORT | wxBORDER_THEME);	
 	//roi_list_box->InsertItem(0, wxT("Teste"));
@@ -85,7 +85,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	vbox_controls->Add(remove_roi_button);
 
 	// Add listbox for paths
-	paths_list_box = new wxListCtrl(global_panel, wxID_ANY,
+	paths_list_box = new wxListCtrl(global_panel, MainFrame::ID_PathsList,
 		                       wxDefaultPosition, wxSize(200,100),
 				       wxLC_REPORT | wxBORDER_THEME);	
 	paths_list_box->InsertColumn(1, wxT("#"));
@@ -108,6 +108,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	Connect(MainFrame::ID_RemoveROI, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnRemoveROIPressed));
 	Connect(MainFrame::ID_Done, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnDonePressed));
 	Connect(MainFrame::ID_Next, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnNextPressed));
+	Connect(MainFrame::ID_RoisList, wxEVT_LIST_ITEM_SELECTED, wxListEventHandler(MainFrame::OnRoiListSelected));
+	Connect(MainFrame::ID_PathsList, wxEVT_LIST_ITEM_SELECTED, wxListEventHandler(MainFrame::OnPathsListSelected));
 
 	//if(imageROIManager.loadImage("img/test.jpeg")) {
 	//	populateROIListBox(imageROIManager.getROIs());	
@@ -284,6 +286,14 @@ void MainFrame::OnSize(wxSizeEvent& event) {
 	//image_panel->paintROIs(imageROIManager.getROIs());
 	//image_panel->paintNow();
 	event.Skip();
+}
+
+void MainFrame::OnRoiListSelected(wxListEvent& event) {
+	// TODO
+}
+
+void MainFrame::OnPathsListSelected(wxListEvent& event) {
+
 }
 
 void MainFrame::populateROIListBox(const std::vector<roi::Rectangle> rois) {
