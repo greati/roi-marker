@@ -293,7 +293,8 @@ void MainFrame::OnRoiListSelected(wxListEvent& event) {
 }
 
 void MainFrame::OnPathsListSelected(wxListEvent& event) {
-
+	currentPathIndex = event.GetIndex();
+	updateScreenOnLoad();
 }
 
 void MainFrame::populateROIListBox(const std::vector<roi::Rectangle> rois) {
