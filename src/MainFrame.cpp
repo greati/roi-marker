@@ -1,6 +1,8 @@
 #include "MainFrame.h"
 #include "wxImagePanel.h"
 
+#include <glob.h>
+
 class MainFrame;
 
 wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
@@ -8,7 +10,7 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(wxID_EXIT, MainFrame::OnExit)
 	EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
 	EVT_MENU(MainFrame::ID_Open, MainFrame::OnOpen)
-	EVT_MENU(MainFrame::ID_OpenDir, MainFrame::OnOpenDir)
+	//EVT_MENU(MainFrame::ID_OpenDir, MainFrame::OnOpenDir)
 	EVT_MOTION(MainFrame::OnMouseMoved)
 	EVT_SIZE(MainFrame::OnSize)
 wxEND_EVENT_TABLE()
@@ -47,8 +49,10 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	// Add control buttons
 	wxButton* done_button = new wxButton(global_panel, MainFrame::ID_Done, wxT("Done"));
 	wxButton* next_button = new wxButton(global_panel, MainFrame::ID_Next, wxT("Next"));
+	wxButton* back_button = new wxButton(global_panel, MainFrame::ID_Back, wxT("Back"));
 	vbox_controls->Add(done_button);
 	vbox_controls->Add(next_button);
+	vbox_controls->Add(back_button);
 
 	// Add information texts + reset buttons
 	wxButton* reset_ulc_button = new wxButton(global_panel, MainFrame::ID_Reset_1, wxT("Reset"));
@@ -69,7 +73,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
 	// Add listbox for multiple ROIs
 	roi_list_box = new wxListCtrl(global_panel, MainFrame::ID_RoisList,
-		                       wxDefaultPosition, wxSize(200,100),
+		                       wxDefaultPosition, wxSize(250,150),
 				       wxLC_REPORT | wxBORDER_THEME);	
 	//roi_list_box->InsertItem(0, wxT("Teste"));
 	//roi_list_box->InsertItem(1, wxT("Teste"));
@@ -86,7 +90,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
 	// Add listbox for paths
 	paths_list_box = new wxListCtrl(global_panel, MainFrame::ID_PathsList,
-		                       wxDefaultPosition, wxSize(200,100),
+		                       wxDefaultPosition, wxSize(250,150),
 				       wxLC_REPORT | wxBORDER_THEME);	
 	paths_list_box->InsertColumn(1, wxT("#"));
 	paths_list_box->InsertColumn(2, wxT("Image name"));
@@ -108,6 +112,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	Connect(MainFrame::ID_RemoveROI, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnRemoveROIPressed));
 	Connect(MainFrame::ID_Done, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnDonePressed));
 	Connect(MainFrame::ID_Next, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnNextPressed));
+	Connect(MainFrame::ID_Back, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnBackPressed));
 	Connect(MainFrame::ID_RoisList, wxEVT_LIST_ITEM_SELECTED, wxListEventHandler(MainFrame::OnRoiListSelected));
 	Connect(MainFrame::ID_PathsList, wxEVT_LIST_ITEM_SELECTED, wxListEventHandler(MainFrame::OnPathsListSelected));
 
@@ -118,7 +123,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	//---n Building the menu ---//
 	wxMenu* menuFile = new wxMenu;
 	menuFile->Append(ID_Open, "&Load from image(s)...\tCtrl-O", "Load image(s).");
-	menuFile->Append(ID_OpenDir, "&Load from dir...\tCtrl-D", "Load image(s) from dir.");
+	//menuFile->Append(ID_OpenDir, "&Load from dir...\tCtrl-D", "Load image(s) from dir.");
 	menuFile->AppendSeparator();
 	menuFile->Append(wxID_EXIT);	
 
@@ -234,7 +239,26 @@ void MainFrame::OnOpenDir(wxCommandEvent& event) {
 	wxDirDialog * dirPicker = new wxDirDialog(NULL, "Choose a directory", "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
 
 	if (dirPicker->ShowModal() == wxID_OK) {
-		// TODO
+		wxString selectedDir;
+		selectedDir = dirPicker->GetPath();
+
+		glob_t glob_result;
+		if (glob(selectedDir.mb_str(), GLOB_TILDE, NULL, &glob_result) == 0) {
+
+			loadedPaths.clear();
+			loadedFilenames.clear();
+
+			for (unsigned int i = 0; i < glob_result.gl_pathc; ++i) {
+				std::cout << glob_result.gl_pathv[i];
+				loadedPaths.push_back(std::string(glob_result.gl_pathv[i]));	
+				loadedFilenames.push_back(std::string(glob_result.gl_pathv[i]));	
+			}
+			
+			/*if (!loadedPaths.empty()) {
+				currentPathIndex = 0;
+				updateScreenOnLoad();
+			}*/
+		}
 	}
 }
 
@@ -271,8 +295,17 @@ void MainFrame::OnNextPressed(wxCommandEvent& event) {
 	updateScreenOnLoad();
 }
 
+void MainFrame::OnBackPressed(wxCommandEvent& event) {
+	currentPathIndex--;
+	if (currentPathIndex == -1)
+		currentPathIndex = loadedPaths.size() - 1;
+	updateScreenOnLoad();
+}
+
 void MainFrame::OnDonePressed(wxCommandEvent& event) {
-	imageROIManager.commit();	
+	if(imageROIManager.commit()) {
+		wxMessageBox("Done!", "Success", wxOK | wxICON_INFORMATION);
+	}	
 }
 
 void MainFrame::OnSize(wxSizeEvent& event) {
@@ -289,7 +322,16 @@ void MainFrame::OnSize(wxSizeEvent& event) {
 }
 
 void MainFrame::OnRoiListSelected(wxListEvent& event) {
-	// TODO
+	long i = event.GetIndex();
+	ulc = imageROIManager.getROIs()[i].ulc;	
+	drc = imageROIManager.getROIs()[i].drc;	
+	drc_text->SetLabel("("+wxString::FromDouble(ulc.x)+","+wxString::FromDouble(ulc.y)+ ")");
+	ulc_text->SetLabel("("+wxString::FromDouble(drc.x)+","+wxString::FromDouble(drc.y)+ ")");
+	// Update the preview
+	wxRect clipRect {ulc.x, ulc.y, drc.x - ulc.x, drc.y - ulc.y};
+	//wxImage prev = image_panel->getImage().GetSubImage(clipRect);
+	wxBitmap prev = image_panel->getResized().GetSubBitmap(clipRect);
+	roi_preview->setImage(prev.ConvertToImage());
 }
 
 void MainFrame::OnPathsListSelected(wxListEvent& event) {
