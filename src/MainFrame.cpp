@@ -46,7 +46,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
 	// Add control buttons
 	wxButton* done_button = new wxButton(global_panel, MainFrame::ID_Done, wxT("Done"));
-	wxButton* next_button = new wxButton(global_panel, -1, wxT("Next"));
+	wxButton* next_button = new wxButton(global_panel, MainFrame::ID_Next, wxT("Next"));
 	vbox_controls->Add(done_button);
 	vbox_controls->Add(next_button);
 
@@ -107,6 +107,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	Connect(MainFrame::ID_AddROI, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnAddROIPressed));
 	Connect(MainFrame::ID_RemoveROI, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnRemoveROIPressed));
 	Connect(MainFrame::ID_Done, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnDonePressed));
+	Connect(MainFrame::ID_Next, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnNextPressed));
 
 	//if(imageROIManager.loadImage("img/test.jpeg")) {
 	//	populateROIListBox(imageROIManager.getROIs());	
@@ -182,8 +183,6 @@ void MainFrame::OnReset2Pressed(wxCommandEvent& event) {
 }
 
 void MainFrame::OnAddROIPressed(wxCommandEvent& event) {
-	// TODO Here I'll probably have to fix the rectangle points
-
 	// For now, consider the user will give the right rectangle
 	imageROIManager.addROI(ulc, drc);		
 	populateROIListBox(imageROIManager.getROIs());
@@ -209,6 +208,7 @@ void MainFrame::OnRemoveROIPressed(wxCommandEvent& event) {
 	}	
 
 	populateROIListBox(imageROIManager.getROIs());
+	image_panel->paintNow();
 	//image_panel->paintROIs(imageROIManager.getROIs());
 }
 
@@ -262,6 +262,13 @@ void MainFrame::OnOpen(wxCommandEvent& event) {
 	}
 }
  
+void MainFrame::OnNextPressed(wxCommandEvent& event) {
+	currentPathIndex++;
+	if (currentPathIndex == loadedPaths.size())
+		currentPathIndex = 0;
+	updateScreenOnLoad();
+}
+
 void MainFrame::OnDonePressed(wxCommandEvent& event) {
 	imageROIManager.commit();	
 }

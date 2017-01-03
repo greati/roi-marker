@@ -38,7 +38,8 @@ class MainFrame : public wxFrame {
 			ID_Open = 7,
 			ID_FilePickerImages = 8,
 			ID_DirPickerImages = 9,
-			ID_OpenDir = 10
+			ID_OpenDir = 10,
+			ID_Next = 11
 
 		};
 
@@ -77,6 +78,7 @@ class MainFrame : public wxFrame {
 		void OnAddROIPressed(wxCommandEvent& event);
 		void OnRemoveROIPressed(wxCommandEvent& event);
 		void OnDonePressed(wxCommandEvent& event);
+		void OnNextPressed(wxCommandEvent& event);
 
 		// Size handlers
 		void OnSize(wxSizeEvent& event);
