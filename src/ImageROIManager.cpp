@@ -29,19 +29,23 @@ bool ImageROIManager::loadImage(const std::string & imagePath) {
 			const Exiv2::Value & widthTag = xmpData["Xmp.ROIs.ImageWidth"].value();
 			const Exiv2::Value & heightTag = xmpData["Xmp.ROIs.ImageHeight"].value();
 			const Exiv2::Value & roisTag = xmpData["Xmp.ROIs.ROIString"].value();
+			const Exiv2::Value & dataTag = xmpData["Xmp.ROIs.ROIData"].value();
 			
 			loadedImageWidth = widthTag.toLong();
 			loadedImageHeight = heightTag.toLong();
 			std::string roiString = roisTag.toString();
+                        std::string roiData = dataTag.toString();
 
 			size_t c = std::count(roiString.begin(), roiString.end(), ' '); 
 			
 			std::stringstream ssroi (roiString);
+                        std::stringstream ssdata (roiData);
 
 			for (unsigned int i = 0; i < c / 4; ++i) {
 				// Loaded ROI
 				roi::Rectangle r;
 				ssroi >> r.ulc.x >> r.ulc.y >> r.drc.x >> r.drc.y;
+                                ssdata >> r.data;
 				loadedRois.push_back(r);
 				
 				// ROIs adjusted for current width and height
@@ -72,12 +76,15 @@ bool ImageROIManager::commit() {
 	xmpData["Xmp.ROIs.ImageHeight"] = int32_t(imageHeight);
 	
 	std::string roiString = "";
+        std::string roiData = "";
 	for (unsigned int i = 0; i < rois.size(); ++i) {
 		roiString += std::to_string(rois[i].ulc.x) + " " + std::to_string(rois[i].ulc.y) + " " + 
 			std::to_string(rois[i].drc.x) + " " + std::to_string(rois[i].drc.y) + " ";		
+                roiData += rois[i].data + " ";
 	}
 
 	xmpData["Xmp.ROIs.ROIString"] = roiString;
+	xmpData["Xmp.ROIs.ROIData"] = roiData;
 
 	// Write the metadata in the image
 	image->setXmpData(xmpData);
@@ -86,8 +93,8 @@ bool ImageROIManager::commit() {
 	return true;
 }
 
-bool ImageROIManager::addROI(const roi::Point ulc, const roi::Point drc) {
-	roi::Rectangle r {ulc, drc};
+bool ImageROIManager::addROI(const roi::Point ulc, const roi::Point drc, const std::string & data) {
+	roi::Rectangle r {ulc, drc, data};
 	rois.push_back(r);
 	return true;
 }

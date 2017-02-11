@@ -60,6 +60,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	wxStaticText* first_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("Upper left corner:"));
 	wxStaticText* second_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("Lower right corner:"));
 	roi_preview = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG, false, 150, 50);	
+        plate_content_txt = new wxTextCtrl(global_panel, 1, "Hi", wxDefaultPosition, wxDefaultSize);
 
 	ulc_text = new wxStaticText(global_panel, wxID_ANY, wxT("(-1,-1)"));
 	drc_text = new wxStaticText(global_panel, wxID_ANY, wxT("(-1,-1)"));
@@ -70,6 +71,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	vbox_controls->Add(drc_text);
 	vbox_controls->Add(reset_drc_button);
 	vbox_controls->Add(roi_preview, 1, wxEXPAND);
+	vbox_controls->Add(plate_content_txt, 1, wxEXPAND);
 
 	// Add listbox for multiple ROIs
 	roi_list_box = new wxListCtrl(global_panel, MainFrame::ID_RoisList,
@@ -168,7 +170,9 @@ void MainFrame::OnImageClick(wxMouseEvent& event) {
 		drc.x = event.GetX();
 		drc.y = event.GetY();
 		drc_text->SetLabel("("+wxString::FromDouble(event.GetX())+","+wxString::FromDouble(event.GetY())+ ")");
+	}
 
+	if (drc.x != -1 && ulc.x != -1) {
 		// Update the preview
 		wxRect clipRect {ulc.x, ulc.y, drc.x - ulc.x, drc.y - ulc.y};
 		//wxImage prev = image_panel->getImage().GetSubImage(clipRect);
@@ -191,7 +195,7 @@ void MainFrame::OnReset2Pressed(wxCommandEvent& event) {
 
 void MainFrame::OnAddROIPressed(wxCommandEvent& event) {
 	// For now, consider the user will give the right rectangle
-	imageROIManager.addROI(ulc, drc);		
+	imageROIManager.addROI(ulc, drc, std::string(plate_content_txt->GetValue().mb_str()));		
 	populateROIListBox(imageROIManager.getROIs());
 	//image_panel->paintROIs(imageROIManager.getROIs());
 	image_panel->paintNow();
@@ -332,6 +336,8 @@ void MainFrame::OnRoiListSelected(wxListEvent& event) {
 	//wxImage prev = image_panel->getImage().GetSubImage(clipRect);
 	wxBitmap prev = image_panel->getResized().GetSubBitmap(clipRect);
 	roi_preview->setImage(prev.ConvertToImage());
+        wxString data {imageROIManager.getROIs()[i].data};
+        plate_content_txt->SetValue(data);
 }
 
 void MainFrame::OnPathsListSelected(wxListEvent& event) {

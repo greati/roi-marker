@@ -59,6 +59,7 @@ class MainFrame : public wxFrame {
 		wxListCtrl* paths_list_box;
 		wxROIsImagePanel* image_panel;
 		wxImagePanel* roi_preview;
+                wxTextCtrl* plate_content_txt;
 
 		// State of the application
 		// TODO: Move them to another place, maybe as static attributes

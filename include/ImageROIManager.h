@@ -65,7 +65,7 @@ class ImageROIManager {
 		 * in the vector of ROIs from two roi::Point.
 		 *
 		 * */
-		bool addROI(const roi::Point ulc, const roi::Point drc);
+		bool addROI(const roi::Point ulc, const roi::Point drc, const std::string & data);
 
 		/**
 		 * Remove an existing ROI from the vector of ROIs
