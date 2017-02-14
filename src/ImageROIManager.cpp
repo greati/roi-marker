@@ -29,23 +29,31 @@ bool ImageROIManager::loadImage(const std::string & imagePath) {
 			const Exiv2::Value & widthTag = xmpData["Xmp.ROIs.ImageWidth"].value();
 			const Exiv2::Value & heightTag = xmpData["Xmp.ROIs.ImageHeight"].value();
 			const Exiv2::Value & roisTag = xmpData["Xmp.ROIs.ROIString"].value();
-			const Exiv2::Value & dataTag = xmpData["Xmp.ROIs.ROIData"].value();
-			
+
+            // Extract data, that can exist or not
+            std::string roiData;
+            try {
+                const Exiv2::Value & dataTag = xmpData["Xmp.ROIs.ROIData"].value();
+                roiData = dataTag.toString();
+            } catch (Exiv2::Error & e) {
+                roiData = "";
+            }
+
 			loadedImageWidth = widthTag.toLong();
 			loadedImageHeight = heightTag.toLong();
-			std::string roiString = roisTag.toString();
-                        std::string roiData = dataTag.toString();
+
+            std::string roiString = roisTag.toString();
 
 			size_t c = std::count(roiString.begin(), roiString.end(), ' '); 
 			
 			std::stringstream ssroi (roiString);
-                        std::stringstream ssdata (roiData);
+            std::stringstream ssdata (roiData);
 
 			for (unsigned int i = 0; i < c / 4; ++i) {
 				// Loaded ROI
 				roi::Rectangle r;
 				ssroi >> r.ulc.x >> r.ulc.y >> r.drc.x >> r.drc.y;
-                                ssdata >> r.data;
+                ssdata >> r.data;
 				loadedRois.push_back(r);
 				
 				// ROIs adjusted for current width and height
@@ -54,16 +62,16 @@ bool ImageROIManager::loadImage(const std::string & imagePath) {
 				adjustedRoi.ulc.y = r.ulc.y * imageHeight / loadedImageHeight;
 				adjustedRoi.drc.x = r.drc.x * imageWidth / loadedImageWidth;
 				adjustedRoi.drc.y = r.drc.y * imageHeight / loadedImageHeight;
-                                adjustedRoi.data = r.data;
+                adjustedRoi.data = r.data;
 				rois.push_back(adjustedRoi);
 			}
 		} catch (Exiv2::Error & e) {
 			std::cout << "Error: " << e.what() << std::endl;
-			return false;
 		}
 
 		return true;
-	}
+
+	} else std::cout << "No XMP data!" << std::endl;
 
 	return false;
 }
