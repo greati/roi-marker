@@ -42,7 +42,8 @@ class MainFrame : public wxFrame {
 			ID_Next = 11,
 			ID_RoisList = 12,
 			ID_PathsList = 13,
-			ID_Back = 14
+			ID_Back = 14,
+                        ID_Edit_Selected = 15
 		};
 
 		wxBoxSizer* vbox_image;
@@ -83,6 +84,7 @@ class MainFrame : public wxFrame {
 		void OnDonePressed(wxCommandEvent& event);
 		void OnNextPressed(wxCommandEvent& event);
 		void OnBackPressed(wxCommandEvent& event);
+		void OnSaveEditPressed(wxCommandEvent& event);
 
 		// List handlers
 		void OnRoiListSelected(wxListEvent& event);

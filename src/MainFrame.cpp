@@ -61,6 +61,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	wxStaticText* first_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("Upper left corner:"));
 	wxStaticText* second_point_txt = new wxStaticText(global_panel, wxID_ANY, wxT("Lower right corner:"));
 	roi_preview = new wxImagePanel(global_panel, wxT("img/test.jpeg"), wxBITMAP_TYPE_JPEG, false, 150, 50);	
+	wxButton* save_edit_selected = new wxButton(global_panel, MainFrame::ID_Edit_Selected, wxT("Save"));
         plate_content_txt = new wxTextCtrl(global_panel, 1, "Hi", wxDefaultPosition, wxDefaultSize);
 
 	ulc_text = new wxStaticText(global_panel, wxID_ANY, wxT("(-1,-1)"));
@@ -72,6 +73,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	vbox_controls->Add(drc_text);
 	vbox_controls->Add(reset_drc_button);
 	vbox_controls->Add(roi_preview, 1, wxEXPAND);
+	vbox_controls->Add(save_edit_selected);
 	vbox_controls->Add(plate_content_txt, 1, wxEXPAND);
 
 	// Add listbox for multiple ROIs
@@ -93,7 +95,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
 	// Add listbox for paths
 	paths_list_box = new wxListCtrl(global_panel, MainFrame::ID_PathsList,
-		                       wxDefaultPosition, wxSize(250,150),
+		                       wxDefaultPosition, wxSize(250,100),
 				       wxLC_REPORT | wxBORDER_THEME);	
 	paths_list_box->InsertColumn(1, wxT("#"));
 	paths_list_box->InsertColumn(2, wxT("Image name"));
@@ -118,6 +120,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	Connect(MainFrame::ID_Back, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnBackPressed));
 	Connect(MainFrame::ID_RoisList, wxEVT_LIST_ITEM_SELECTED, wxListEventHandler(MainFrame::OnRoiListSelected));
 	Connect(MainFrame::ID_PathsList, wxEVT_LIST_ITEM_SELECTED, wxListEventHandler(MainFrame::OnPathsListSelected));
+	Connect(MainFrame::ID_Edit_Selected, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnSaveEditPressed));
 
 	//if(imageROIManager.loadImage("img/test.jpeg")) {
 	//	populateROIListBox(imageROIManager.getROIs());	
@@ -192,6 +195,10 @@ void MainFrame::OnReset2Pressed(wxCommandEvent& event) {
 	drc.x = -1;
 	drc.y = -1;
 	drc_text->SetLabel("(-1,-1)");
+}
+
+void MainFrame::OnSaveEditPressed(wxCommandEvent& event) {
+
 }
 
 void MainFrame::OnAddROIPressed(wxCommandEvent& event) {
