@@ -198,7 +198,9 @@ void MainFrame::OnReset2Pressed(wxCommandEvent& event) {
 }
 
 void MainFrame::OnSaveEditPressed(wxCommandEvent& event) {
-
+        wxString dataTextBox = plate_content_txt->GetValue();
+        roi::Rectangle & roi = imageROIManager.getROIs()[selectedRoi];
+        roi.data = std::string(dataTextBox.mb_str());
 }
 
 void MainFrame::OnAddROIPressed(wxCommandEvent& event) {
@@ -349,6 +351,9 @@ void MainFrame::OnRoiListSelected(wxListEvent& event) {
 
         long roi_id;
         cell_contents.ToLong(&roi_id);
+
+        // Set variable for identifying the selected ROI in other methods
+        selectedRoi = roi_id;
 
 	ulc = imageROIManager.getROIs()[roi_id].ulc;	
 	drc = imageROIManager.getROIs()[roi_id].drc;	

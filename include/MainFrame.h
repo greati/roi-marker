@@ -69,6 +69,7 @@ class MainFrame : public wxFrame {
 		std::vector<std::string> loadedPaths;
 		std::vector<std::string> loadedFilenames;
 		unsigned int currentPathIndex;
+                unsigned long selectedRoi;      // Selected from the list of ROIs
 
 		//--- Helpers ---//
 		void populateROIListBox(const std::vector<roi::Rectangle> rois);

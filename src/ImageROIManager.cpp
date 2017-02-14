@@ -6,7 +6,7 @@ using namespace roi;
 
 ImageROIManager::ImageROIManager(const long & _width, const long & _height) : imageWidth {_width}, imageHeight {_height} {}
 
-const std::vector<roi::Rectangle> & ImageROIManager::getROIs() const { 
+std::vector<roi::Rectangle> & ImageROIManager::getROIs() { 
 	return rois;
 }
 
@@ -54,6 +54,7 @@ bool ImageROIManager::loadImage(const std::string & imagePath) {
 				adjustedRoi.ulc.y = r.ulc.y * imageHeight / loadedImageHeight;
 				adjustedRoi.drc.x = r.drc.x * imageWidth / loadedImageWidth;
 				adjustedRoi.drc.y = r.drc.y * imageHeight / loadedImageHeight;
+                                adjustedRoi.data = r.data;
 				rois.push_back(adjustedRoi);
 			}
 		} catch (Exiv2::Error & e) {

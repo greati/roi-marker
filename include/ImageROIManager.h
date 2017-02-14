@@ -36,7 +36,7 @@ class ImageROIManager {
 		 * Return the vector of ROIs.
 		 *
 		 * */
-		const std::vector<roi::Rectangle> & getROIs() const;
+		std::vector<roi::Rectangle> & getROIs();
 
 		/**
 		 * Takes an image path and try to load it's 
