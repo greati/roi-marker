@@ -2,6 +2,7 @@
 #include "wxImagePanel.h"
 
 #include <glob.h>
+#include <wx/listctrl.h>
 
 class MainFrame;
 
@@ -327,8 +328,23 @@ void MainFrame::OnSize(wxSizeEvent& event) {
 
 void MainFrame::OnRoiListSelected(wxListEvent& event) {
 	long i = event.GetIndex();
-	ulc = imageROIManager.getROIs()[i].ulc;	
-	drc = imageROIManager.getROIs()[i].drc;	
+
+        wxListItem row_info;
+        wxString cell_contents;
+
+        row_info.m_itemId = i;
+        row_info.m_col = 0;
+        row_info.m_mask = wxLIST_MASK_TEXT;
+
+        roi_list_box->GetItem(row_info);
+
+        cell_contents = row_info.m_text;
+
+        long roi_id;
+        cell_contents.ToLong(&roi_id);
+
+	ulc = imageROIManager.getROIs()[roi_id].ulc;	
+	drc = imageROIManager.getROIs()[roi_id].drc;	
 	drc_text->SetLabel("("+wxString::FromDouble(ulc.x)+","+wxString::FromDouble(ulc.y)+ ")");
 	ulc_text->SetLabel("("+wxString::FromDouble(drc.x)+","+wxString::FromDouble(drc.y)+ ")");
 	// Update the preview
@@ -336,7 +352,7 @@ void MainFrame::OnRoiListSelected(wxListEvent& event) {
 	//wxImage prev = image_panel->getImage().GetSubImage(clipRect);
 	wxBitmap prev = image_panel->getResized().GetSubBitmap(clipRect);
 	roi_preview->setImage(prev.ConvertToImage());
-        wxString data {imageROIManager.getROIs()[i].data};
+        wxString data {imageROIManager.getROIs()[roi_id].data};
         plate_content_txt->SetValue(data);
 }
 
