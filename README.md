@@ -16,7 +16,7 @@ content indication, with a still very poor, but functional, layout design,
 one of the factors to be improved in next steps.
 
 It has been developed in pure C++ and wxWidgets GUI library. One of the
-most important features is the storage of the informations of interest
+most important features is the storage of the information of interest
 using XMP image metadata, through the Exiv2 library. This one allows the
 application to write metadata about the rectangles and its content and, after,
 retrieve them in order to check, for example, the accuracy of
@@ -24,10 +24,10 @@ some detector.
 
 ## Installation
 
-You will need, besides the classic packages regarding to C++ compillation,
+You will need, besides the classic packages regarding to C++ compilation,
 the exiv2, wxWidgets and boost libraries.
 
-##Doubts?
+## Doubts?
 
 Refer to my e-mail, greati@ufrn.edu.br.
 
